@@ -1,0 +1,19 @@
+<!-- docs/_sidebar.md -->
+
+- [Home](/)
+- [Projetos](/Projeto/Projeto.md)
+
+- **Base**
+  - [1. Desenho de Software (Padrões de Projeto)](/Base/1.PadroesDeProjeto.md)
+  - [1.2. Participações - Padrões de Projeto](/Base/1.2.ParticipacoesPadroesDeProjeto.md)
+  - [1.3. Iniciativas Extras - Padrões de Projeto](/Base/1.3.IniciativasExtras.md)
+
+- **Relatórios**
+  - [1.1.1. SubEquipe_01](/Base/Relatórios/1.1.1.SubEquipe_01.md)
+  - [1.1.2. SubEquipe_02](/Base/Relatórios/1.1.2.SubEquipe_02.md)
+  - [1.1.3. SubEquipe_03](/Base/Relatórios/1.1.3.SubEquipe_03.md)
+
+- **Evidências**
+  - [1.1.1. SubEquipe_01](/Base/Evidências/1.1.1.SubEquipe_01.md)
+  - [1.1.2. SubEquipe_02](/Base/Evidências/1.1.2.SubEquipe_02.md)
+  - [1.1.3. SubEquipe_03](/Base/Evidências/1.1.3.SubEquipe_03.md)
