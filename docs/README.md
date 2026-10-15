@@ -5,7 +5,7 @@
     <p class="home-kicker">Arquitetura e Desenho de Software - Turma 02</p>
     <h2>Pet Virtual, Pomodoro e Tracker de Hábitos</h2>
     <p>
-      Repositório de documentação do Grupo 4, desenvolvido na disciplina de
+      Repositório de documentação do Grupo 4 para a Entrega 03, desenvolvido na disciplina de
       Arquitetura e Desenho de Software, ministrada pela professora Milene Serrano.
       O projeto propõe uma aplicação inspirada em Tamagotchi, com estética pixel art,
       que combina produtividade, acompanhamento de hábitos, bem-estar e gamificação
@@ -18,114 +18,88 @@
   </div>
 </div>
 
-## Equipe
+## Equipe · Entrega 03
 
 <div class="team-groups">
-
-  <section class="team-group">
-    <h3>SubEquipe 1</h3>
-    <div class="members-grid">
-      <a class="member-card" href="https://github.com/artmendess" target="_blank">
-        <img src="https://github.com/artmendess.png?size=140" alt="Foto de Arthur Mendes Borges">
-        <strong>Arthur Mendes Borges</strong>
-        <span>241010914</span>
-        <small>@artmendess</small>
-      </a>
-      <a class="member-card" href="https://github.com/lopes061" target="_blank">
-        <img src="https://github.com/lopes061.png?size=140" alt="Foto de Enzo Lopes Ferreira">
-        <strong>Enzo Lopes Ferreira</strong>
-        <span>232002000</span>
-        <small>@lopes061</small>
-      </a>
-      <a class="member-card" href="https://github.com/guin409" target="_blank">
-        <img src="https://github.com/guin409.png?size=140" alt="Foto de Guilherme Negreiros Pereira">
-        <strong>Guilherme Negreiros Pereira</strong>
-        <span>232014001</span>
-        <small>@guin409</small>
-      </a>
-    </div>
-  </section>
-
-  <section class="team-group">
-    <h3>SubEquipe 2</h3>
-    <div class="members-grid">
-      <a class="member-card" href="https://github.com/luabrantess" target="_blank">
+  <section class="team-group"><h3>Subgrupo 02</h3><p class="group-caption">Padrões Criacionais · FOCO_01</p>
+    <div class="members-grid"><a class="member-card" href="https://github.com/luabrantess" target="_blank">
         <img src="https://github.com/luabrantess.png?size=140" alt="Foto de Ana Luiza Borba de Abrantes">
         <strong>Ana Luiza Borba de Abrantes</strong>
         <span>200014226</span>
         <small>@luabrantess</small>
       </a>
-      <a class="member-card" href="https://github.com/Pabloo8" target="_blank">
-        <img src="https://github.com/Pabloo8.png?size=140" alt="Foto de Pablo Cunha de Jesus">
-        <strong>Pablo Cunha de Jesus</strong>
-        <span>222014910</span>
-        <small>@Pabloo8</small>
-      </a>
-      <a class="member-card" href="https://github.com/jvopBR" target="_blank">
-        <img src="https://github.com/jvopBR.png?size=140" alt="Foto de João Vitor Mendonça Merlin">
-        <strong>João Vitor Mendonça Merlin</strong>
-        <span>222006848</span>
-        <small>@jvopBR</small>
-      </a>
-      <a class="member-card" href="https://github.com/auslogyc" target="_blank">
+<a class="member-card" href="https://github.com/auslogyc" target="_blank">
         <img src="https://github.com/auslogyc.png?size=140" alt="Foto de Danilo Sarmento Barros">
         <strong>Danilo Sarmento Barros</strong>
         <span>222008468</span>
         <small>@auslogyc</small>
       </a>
-    </div>
+<a class="member-card" href="https://github.com/jvopBR" target="_blank">
+        <img src="https://github.com/jvopBR.png?size=140" alt="Foto de João Vitor Mendonça Merlin">
+        <strong>João Vitor Mendonça Merlin</strong>
+        <span>222006848</span>
+        <small>@jvopBR</small>
+      </a></div>
+    <p><a href="#/Base/Relatórios/1.1.2.SubEquipe_02.md">Relatório</a> · <a href="#/Base/Evidências/1.1.2.SubEquipe_02.md">Evidências</a></p>
   </section>
-
-  <section class="team-group">
-    <h3>SubEquipe 3</h3>
-    <div class="members-grid">
-      <a class="member-card" href="https://github.com/bielg7" target="_blank">
+  <section class="team-group"><h3>Subgrupo 01</h3><p class="group-caption">Padrões Estruturais · FOCO_02</p>
+    <div class="members-grid"><a class="member-card" href="https://github.com/guin409" target="_blank">
+        <img src="https://github.com/guin409.png?size=140" alt="Foto de Guilherme Negreiros Pereira">
+        <strong>Guilherme Negreiros Pereira</strong>
+        <span>232014001</span>
+        <small>@guin409</small>
+      </a>
+<a class="member-card" href="https://github.com/lopes061" target="_blank">
+        <img src="https://github.com/lopes061.png?size=140" alt="Foto de Enzo Lopes Ferreira">
+        <strong>Enzo Lopes Ferreira</strong>
+        <span>232002000</span>
+        <small>@lopes061</small>
+      </a>
+<a class="member-card" href="https://github.com/bielg7" target="_blank">
         <img src="https://github.com/bielg7.png?size=140" alt="Foto de Gabriel Pereira da Silva">
         <strong>Gabriel Pereira da Silva</strong>
         <span>221008641</span>
         <small>@bielg7</small>
+      </a></div>
+    <p><a href="#/Base/Relatórios/1.1.1.SubEquipe_01.md">Relatório</a> · <a href="#/Base/Evidências/1.1.1.SubEquipe_01.md">Evidências</a></p>
+  </section>
+  <section class="team-group"><h3>Subgrupo 03</h3><p class="group-caption">Padrões Comportamentais · FOCO_03</p>
+    <div class="members-grid"><a class="member-card" href="https://github.com/artmendess" target="_blank">
+        <img src="https://github.com/artmendess.png?size=140" alt="Foto de Arthur Mendes Borges">
+        <strong>Arthur Mendes Borges</strong>
+        <span>241010914</span>
+        <small>@artmendess</small>
       </a>
-      <a class="member-card" href="https://github.com/EduardoRGS" target="_blank">
-        <img src="https://github.com/EduardoRGS.png?size=140" alt="Foto de Eduardo Ribeiro Gomes da Silva">
-        <strong>Eduardo Ribeiro Gomes da Silva</strong>
-        <span>190027011</span>
-        <small>@EduardoRGS</small>
-      </a>
-      <a class="member-card" href="https://github.com/vevetin" target="_blank">
+<a class="member-card" href="https://github.com/vevetin" target="_blank">
         <img src="https://github.com/vevetin.png?size=140" alt="Foto de Weverton Rodrigues da Costa Silva">
         <strong>Weverton Rodrigues da Costa Silva</strong>
         <span>221022767</span>
         <small>@vevetin</small>
       </a>
-    </div>
+<a class="member-card" href="https://github.com/Pabloo8" target="_blank">
+        <img src="https://github.com/Pabloo8.png?size=140" alt="Foto de Pablo Cunha de Jesus">
+        <strong>Pablo Cunha de Jesus</strong>
+        <span>222014910</span>
+        <small>@Pabloo8</small>
+      </a></div>
+    <p><a href="#/Base/Relatórios/1.1.3.SubEquipe_03.md">Relatório</a> · <a href="#/Base/Evidências/1.1.3.SubEquipe_03.md">Evidências</a></p>
   </section>
-
+  <section class="team-group"><h3>Outros integrantes do cadastro existente</h3><p class="group-caption">Sem atribuição às subequipes da Entrega 03 nesta divisão.</p><div class="members-grid"><a class="member-card" href="https://github.com/EduardoRGS" target="_blank">
+        <img src="https://github.com/EduardoRGS.png?size=140" alt="Foto de Eduardo Ribeiro Gomes da Silva">
+        <strong>Eduardo Ribeiro Gomes da Silva</strong>
+        <span>190027011</span>
+        <small>@EduardoRGS</small>
+      </a></div></section>
 </div>
 
-## Links Rápidos
-
-<div class="quick-links">
-  <section class="quick-link-group">
-    <h3>Padrões de Projeto</h3>
-    <a href="/Base/1.PadroesDeProjeto.md">Visão geral da Entrega 03</a>
-    <a href="/Base/1.2.ParticipacoesPadroesDeProjeto.md">Participações da Entrega 03</a>
-    <a href="/Base/1.3.IniciativasExtras.md">Iniciativas extras e requisitos</a>
-  </section>
-
-  <section class="quick-link-group">
-    <h3>Relatórios</h3>
-    <a href="/Base/Relatórios/1.1.1.SubEquipe_01.md">Relatório da SubEquipe 1</a>
-    <a href="/Base/Relatórios/1.1.2.SubEquipe_02.md">Relatório da SubEquipe 2</a>
-    <a href="/Base/Relatórios/1.1.3.SubEquipe_03.md">Relatório da SubEquipe 3</a>
-  </section>
-
-  <section class="quick-link-group">
-    <h3>Evidências</h3>
-    <a href="/Base/Evidências/1.1.1.SubEquipe_01.md">Evidências da SubEquipe 1</a>
-    <a href="/Base/Evidências/1.1.2.SubEquipe_02.md">Evidências da SubEquipe 2</a>
-    <a href="/Base/Evidências/1.1.3.SubEquipe_03.md">Evidências da SubEquipe 3</a>
-  </section>
-</div>
+<details class="code-evidence">
+  <summary>Organização anteriormente exibida nesta Home</summary>
+  <div class="archive-groups">
+    <p><strong>SubEquipe 1:</strong> Arthur Mendes Borges, Enzo Lopes Ferreira e Guilherme Negreiros Pereira.</p>
+    <p><strong>SubEquipe 2:</strong> Ana Luiza Borba de Abrantes, Pablo Cunha de Jesus, João Vitor Mendonça Merlin e Danilo Sarmento Barros.</p>
+    <p><strong>SubEquipe 3:</strong> Gabriel Pereira da Silva, Eduardo Ribeiro Gomes da Silva e Weverton Rodrigues da Costa Silva.</p>
+  </div>
+</details>
 
 <style>
   .home-hero {
