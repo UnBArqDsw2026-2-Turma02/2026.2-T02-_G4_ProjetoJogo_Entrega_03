@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor Cliente as Cliente de demonstracao
+    participant F as JogoFacade
+    participant P as PetVirtual
+    participant H as HistoricoUsuario
+    participant C as Conquista
+    Note over Cliente,F: Atividade ja concluida; categoria e XP ja calculados e validados
+    Cliente->>F: concluirAtividade(idConclusao, categoria, pontos)
+    F->>H: possuiConclusao(idConclusao)
+    H-->>F: registrada
+    alt Conclusao ja registrada
+        F-->>Cliente: ResultadoConclusao(JA_REGISTRADA)
+    else Nova conclusao
+        F->>P: adicionarXP(categoria, pontos)
+        F->>P: verificarEvolucao()
+        F->>H: registrarConclusao(idConclusao, categoria, pontos)
+        loop Para cada conquista ainda bloqueada
+            F->>C: validarRequisitoGeral(usuario)
+            C-->>F: criterioAtendido
+            opt Criterio atendido
+                F->>C: desbloquearConquista()
+            end
+        end
+        F-->>Cliente: ResultadoConclusao(PROCESSADA, novasConquistas)
+    end
