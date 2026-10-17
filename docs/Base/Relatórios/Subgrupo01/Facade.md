@@ -184,18 +184,98 @@ sequenceDiagram
 A ordem é proposta para o caminho de sucesso de uma demonstração síncrona. O modelo não promete transações ou recuperação automática de falhas entre etapas. Esses mecanismos exigiriam decisões adicionais de persistência e consistência.
 
 ##### Implementação (Código & Vídeo com Padrão em Execução)
-Explicar cada trecho de código, inerente aos participantes do padrão.
-Conferir um link para o código hospedado no repositorio do projeto.
-Acordar um vídeo, demonstrando o código em execução.
 
-<!-- separador do roteiro original -->
-<div class="fill-slot"><strong>Código e execução</strong><p>Inserir explicação dos trechos, link permanente para o código e vídeo do padrão em execução.</p></div>
+A implementação em Python corresponde ao recorte independente do UML. O exemplo usa os subsistemas `PetVirtual`, `HistoricoUsuario` e `Conquista`, com o contexto de `Usuario`. A fachada recebe o usuário na construção e mantém referências aos mesmos objetos. Não depende dos códigos de Adapter ou Decorator.
 
-##### Rastreabilidade do padrão
+**Arquivos:**
 
-| Requisito ou problema | Decisão e papel do padrão | Modelo UML | Código | Evidência de execução |
-|---|---|---|---|---|
-| A preencher | A preencher | A preencher | A preencher | A preencher |
+- <a href="exemplos/facade/jogo_facade.py" target="_blank" rel="noopener">Código da fachada e dos participantes</a>.
+- <a href="exemplos/facade/demo.py" target="_blank" rel="noopener">Cliente de demonstração</a>.
+- <a href="exemplos/facade/test_jogo_facade.py" target="_blank" rel="noopener">Testes automatizados</a>.
+
+###### Montagem dos objetos
+
+```python
+usuario = Usuario("usuario-demo")
+jogo = JogoFacade(usuario)
+```
+
+`Usuario` reúne seu pet, histórico e conquistas. Cada instância recebe objetos próprios para evitar compartilhar dados entre usuários. `JogoFacade` mantém referências a esses objetos; sua criação não transfere a responsabilidade das regras de negócio para a fachada.
+
+###### Entrada, validação e repetição
+
+```python
+resultado = jogo.concluirAtividade(
+    "pomodoro-001", CategoriaXP.INTELECTUAL, 50
+)
+```
+
+O identificador representa uma ocorrência já concluída. A fachada verifica se ele é uma string não vazia e valida categoria e pontos inteiros não negativos antes de alterar o estado. Em seguida, consulta `historico.possuiConclusao()`. Se o evento já existe, retorna `ResultadoConclusao` com situação `JA_REGISTRADA`, sem repetir os efeitos. A atividade de origem continua responsável por validar sua conclusão e a categoria permitida.
+
+###### Delegação aos subsistemas
+
+```python
+self.pet.adicionarXP(categoria, pontos)
+self.pet.verificarEvolucao()
+self.historico.registrarConclusao(idConclusao, categoria, pontos)
+```
+
+Essas chamadas seguem o diagrama de sequência. O pet administra o vetor de cinco categorias e calcula sua forma. O histórico armazena uma ocorrência imutável com identificador, categoria e pontos. A fachada organiza a sequência sem implementar a fórmula da evolução.
+
+###### Avaliação das conquistas
+
+```python
+for conquista in self.conquistas:
+    if (not conquista.foiDesbloqueada
+            and conquista.validarRequisitoGeral(self.usuario)):
+        conquista.desbloquearConquista()
+        novas.append(conquista.nome)
+```
+
+A avaliação recebe o usuário, preservando a assinatura da Entrega 02. O histórico já contém a conclusão atual quando o critério é verificado. Somente conquistas ainda bloqueadas são avaliadas; o resultado contém apenas os novos desbloqueios.
+
+###### Cliente e resultado
+
+`ClienteDemo` monta os objetos, exibe o estado inicial e solicita cada processamento pela fachada. O cliente consulta os objetos para mostrar o resultado, mas não executa diretamente as alterações dos subsistemas. `ResultadoConclusao` informa PROCESSADA ou JA_REGISTRADA e os nomes das novas conquistas.
+
+###### Regras ilustrativas e limites
+
+Os valores 50, 20 e 40 XP são dados da demonstração, não uma fórmula de cálculo. As conquistas “Primeira atividade” e “Duas atividades” exigem uma e duas conclusões, respectivamente. A evolução escolhe a categoria com maior XP, preserva a forma atual em empate e mantém NEUTRO quando o vetor está zerado. O estado DESMOTIVADO não é acionado neste recorte, pois depende de critérios adicionais. A taxa de completação ilustrativa divide as conclusões pelas atividades previstas e não participa da decisão de evolução deste exemplo.
+
+Os dados ficam em memória e são reiniciados a cada execução. Não há persistência, concorrência, transações ou recuperação de falhas entre etapas.
+
+###### Execução e verificação
+
+Na raiz do repositório, com Python 3.10 ou superior:
+
+```sh
+python docs/exemplos/facade/demo.py
+python -m unittest discover -s docs/exemplos/facade -p "test_*.py" -v
+```
+
+No ambiente local desta preparação, a execução foi verificada com o Python disponibilizado pelo aplicativo. A demonstração executou os quatro cenários abaixo, e os sete testes passaram em 17/10/2026. Os testes verificam o fluxo completo, reenvio inclusive por outra instância de fachada, nova ocorrência, entradas inválidas sem efeitos, isolamento de usuários, formas por categoria e empate.
+
+| Cenário demonstrado | Resultado observado |
+|---|---|
+| Pomodoro, 50 XP intelectual | Pet ESTUDIOSO, um registro e primeira conquista desbloqueada. |
+| Reenvio do Pomodoro | JA_REGISTRADA; XP, histórico e conquistas preservados. |
+| Água, 20 XP de hidratação | Dois registros e segunda conquista desbloqueada; pet continua ESTUDIOSO. |
+| Nova ocorrência, 40 XP de hidratação | Hidratação totaliza 60 XP; pet HIDRATADO, três registros e nenhum desbloqueio repetido. |
+
+**Vídeo obrigatório: pendente.** Mostrar o problema e o UML, apresentar os participantes no código e executar os cenários. Comparar os estados antes e depois da chamada para comprovar o comportamento. Após a gravação, inserir o link e o commit efetivamente demonstrado no relatório e na página de Evidências.
+
+**Links permanentes do código:** [Implementação](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/7e8cd5779f12df89b970835819eb5c35f9cf3ea2/docs/exemplos/facade/jogo_facade.py) · [Demonstração](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/bb84e13a20ecffd8a1ef04dd083f0c045c4250ec/docs/exemplos/facade/demo.py) · [Testes](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/74c0200c9c1470deffa12de092975adb6ee5a59a/docs/exemplos/facade/test_jogo_facade.py). Os links ficam acessíveis no GitHub após o envio destes commits. O registro da execução local está na [página de Evidências](/Base/Evidências/1.1.1.SubEquipe_01.md#execução-local-do-facade).
+
+##### Rastreabilidade das decisões
+
+| Origem | Decisão nesta proposta | Elemento do modelo | Situação |
+|---|---|---|---|
+| Entrega 01: atividades relacionadas ao desenvolvimento do pet [3] | Processar consequências da conclusão | Entrada da fachada e relação com pet | Modelado |
+| Entrega 02: XP por categoria e operações de evolução [4] | Delegar XP e evolução ao pet | `PetVirtual` | Modelado, implementado e verificado |
+| Entrega 02: histórico e conquistas [4] | Registrar ocorrência e avaliar o usuário | `HistoricoUsuario`, `Conquista`, `Usuario` | Registro proposto; avaliação preservada |
+| Aula e dissertação: simplificação de acesso [1][2] | Uma operação pública para coordenar subsistemas | `JogoFacade` e `ClienteDemo` | Modelado |
+| Decisão local da demonstração | Evitar reprocessar a mesma ocorrência | `possuiConclusao()` | Implementado e verificado |
+| Roteiro do FOCO_02 [5] | Relacionar modelo, código, vídeo e autoria | Relatório, Evidências e Participações | Código verificado e commits vinculados; vídeo e envio ao GitHub pendentes |
 
 ##### Referências utilizadas por Guilherme — Facade
 
