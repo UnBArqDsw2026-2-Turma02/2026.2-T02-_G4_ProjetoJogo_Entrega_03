@@ -69,9 +69,119 @@ No histórico são propostas `possuiConclusao()` e `registrarConclusao()`. Essas
 O histórico é atualizado antes da avaliação das conquistas para que o contexto possa refletir a conclusão atual. A implementação deve garantir acesso aos mesmos objetos do usuário. A verificação de conclusão repetida é uma decisão complementar do exemplo, não uma exigência do padrão Facade.
 
 ##### Modelagem (Notação UML)
-Apresentar a modelagem (seja estática; seja dinâmica), na notação UML.
 
-<div class="evidence-slot"><strong>Modelo UML</strong><p>Inserir diagrama, legenda e fonte. Relacionar os participantes do padrão às classes ou aos fluxos do projeto.</p></div>
+###### Diagrama de classes
+
+<div class="state-diagram">
+  <img src="Base/Diagramas/Facade/classes.png" alt="Figura 1 — Diagrama de classes proposto para o Facade independente" width="1640" height="1060" loading="lazy" tabindex="0" role="button" aria-label="Ampliar diagrama de classes do Facade">
+</div>
+
+**Figura 1 — Facade aplicado ao processamento de uma atividade concluída.** Fonte: elaborado e revisado por Guilherme Negreiros Pereira, com base nas classes da Entrega 02 e na estrutura apresentada em [1] e [2]. A IA generativa foi utilizada como ferramenta de apoio à elaboração e à revisão.
+
+O diagrama é um recorte: omite atributos e operações sem participação no fluxo. `CategoriaXP` e `Evolucao` são os tipos enumerados já existentes. `ResultadoConclusao` é um objeto de retorno proposto com a situação PROCESSADA ou JA_REGISTRADA e as novas conquistas. O tipo é referido na assinatura, sem uma caixa própria para manter o foco nos participantes do padrão.
+
+| Participante do padrão | Elemento do projeto | Responsabilidade |
+|---|---|---|
+| Cliente | `ClienteDemo` | Simular uma tela solicitando o processamento pela fachada. |
+| Fachada | `JogoFacade` | Coordenar a operação sem concentrar as fórmulas e critérios. |
+| Subsistema | `PetVirtual` | Adicionar XP e verificar evolução. |
+| Subsistema | `HistoricoUsuario` | Consultar e registrar ocorrências concluídas. |
+| Subsistema | `Conquista` | Avaliar o usuário e desbloquear a conquista. |
+| Contexto | `Usuario` | Fornecer o contexto de avaliação das conquistas. |
+
+**Legenda UML:** `+` indica visibilidade pública; `-`, privada; linha contínua com seta indica associação navegável; linha tracejada com seta indica dependência; `1` e `0..*` indicam multiplicidades. Os rótulos `client` e `facade` identificam papéis do padrão. As associações não representam composição nem exigem herança. O desenho de `Conquista` com dependência de `Usuario` expressa o parâmetro utilizado em sua operação de avaliação.
+
+<details>
+<summary>Ver código Mermaid — diagrama de classes</summary>
+
+```mermaid
+classDiagram
+    direction TB
+    class ClienteDemo {
+        <<client>>
+        +executar()
+    }
+    class JogoFacade {
+        <<facade>>
+        +concluirAtividade(idConclusao: String, categoria: CategoriaXP, pontos: int) ResultadoConclusao
+    }
+    class Usuario {
+        +calcularTaxaCompletacao() double
+    }
+    class PetVirtual {
+        -vetorXP: int[5]
+        +adicionarXP(categoria: CategoriaXP, pontos: int) void
+        +verificarEvolucao() void
+        +determinarEvolucao() Evolucao
+    }
+    class HistoricoUsuario {
+        +possuiConclusao(idConclusao: String) boolean
+        +registrarConclusao(idConclusao: String, categoria: CategoriaXP, pontos: int) void
+    }
+    class Conquista {
+        -foiDesbloqueada: boolean
+        +validarRequisitoGeral(usuario: Usuario) boolean
+        +desbloquearConquista() void
+    }
+    ClienteDemo ..> JogoFacade : solicita conclusao
+    JogoFacade "1" --> "1" Usuario : usuario
+    JogoFacade "1" --> "1" PetVirtual : pet
+    JogoFacade "1" --> "1" HistoricoUsuario : historico
+    JogoFacade "1" --> "0..*" Conquista : conquistas
+    Conquista ..> Usuario : avalia contexto
+    note for JogoFacade "Precondicao: atividade concluida e XP calculado/validado.\nObjetos pertencem ao mesmo usuario."
+    note for HistoricoUsuario "Operacoes novas propostas nesta modelagem."
+```
+
+</details>
+
+<a href="Base/Diagramas/Facade/classes.mmd" target="_blank" rel="noopener">Abrir fonte Mermaid do diagrama de classes</a> · <a href="Base/Diagramas/Facade/classes.svg" target="_blank" rel="noopener">Abrir imagem vetorial</a>.
+
+###### Diagrama de sequência
+
+<div class="state-diagram">
+  <img src="Base/Diagramas/Facade/sequencia.png" alt="Figura 2 — Diagrama de sequência do Facade" width="1640" height="1250" loading="lazy" tabindex="0" role="button" aria-label="Ampliar diagrama de sequência do Facade">
+</div>
+
+<details>
+<summary>Ver código Mermaid — diagrama de sequência</summary>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cliente as Cliente de demonstracao
+    participant F as JogoFacade
+    participant P as PetVirtual
+    participant H as HistoricoUsuario
+    participant C as Conquista
+    Note over Cliente,F: Atividade ja concluida; categoria e XP ja calculados e validados
+    Cliente->>F: concluirAtividade(idConclusao, categoria, pontos)
+    F->>H: possuiConclusao(idConclusao)
+    H-->>F: registrada
+    alt Conclusao ja registrada
+        F-->>Cliente: ResultadoConclusao(JA_REGISTRADA)
+    else Nova conclusao
+        F->>P: adicionarXP(categoria, pontos)
+        F->>P: verificarEvolucao()
+        F->>H: registrarConclusao(idConclusao, categoria, pontos)
+        loop Para cada conquista ainda bloqueada
+            F->>C: validarRequisitoGeral(usuario)
+            C-->>F: criterioAtendido
+            opt Criterio atendido
+                F->>C: desbloquearConquista()
+            end
+        end
+        F-->>Cliente: ResultadoConclusao(PROCESSADA, novasConquistas)
+    end
+```
+
+</details>
+
+**Figura 2 — Sequência proposta para conclusão nova e reenvio.** Fonte: elaborado e revisado por Guilherme Negreiros Pereira, a partir do diagrama de classes, com a IA generativa como ferramenta de apoio à elaboração e à revisão. <a href="Base/Diagramas/Facade/sequencia.mmd" target="_blank" rel="noopener">Abrir fonte Mermaid</a> · <a href="Base/Diagramas/Facade/sequencia.svg" target="_blank" rel="noopener">Abrir imagem vetorial</a>.
+
+**Leitura do fluxo:** a fachada consulta o histórico; uma ocorrência já registrada retorna sem nova recompensa. Para uma ocorrência nova, solicita XP e evolução ao pet, registra o evento e percorre as conquistas ainda bloqueadas. Cada conquista avalia seu critério com o usuário e é desbloqueada apenas se ele for atendido. O retorno informa o processamento e as novas conquistas.
+
+A ordem é proposta para o caminho de sucesso de uma demonstração síncrona. O modelo não promete transações ou recuperação automática de falhas entre etapas. Esses mecanismos exigiriam decisões adicionais de persistência e consistência.
 
 ##### Implementação (Código & Vídeo com Padrão em Execução)
 Explicar cada trecho de código, inerente aos participantes do padrão.
