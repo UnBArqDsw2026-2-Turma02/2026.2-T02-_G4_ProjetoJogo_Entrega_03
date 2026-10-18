@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor U as Usuário
+    participant J as :Aplicação
+    participant S as :SessaoPomodoro
+    participant C as :CreditadorXP
+    participant A as :SessaoPomodoroAdapter
+    participant P as :PetVirtual
+
+    U->>J: encerra o Pomodoro
+    J->>S: finalizarSessao()
+    Note over S: statusSessao = CONCLUIDA
+    J->>C: creditar(fonte: FonteXP)
+    C->>A: podeGerarXP()
+    A->>S: statusSessao
+    S-->>A: CONCLUIDA
+    A-->>C: true
+    C->>A: obterChaveCredito()
+    A-->>C: "pomodoro:sessao-01"
+    alt chave ainda não creditada
+        C->>A: obterCategoria()
+        A->>S: categoria
+        S-->>A: INTELECTUAL
+        A-->>C: INTELECTUAL
+        C->>A: obterPontos()
+        A->>S: calcularXPGanho()
+        S-->>A: 50
+        A-->>C: 50
+        C->>P: adicionarXP(INTELECTUAL, 50)
+        C-->>J: CREDITADO
+    else chave já creditada
+        C-->>J: JA_CREDITADO
+    end
+    Note over C,A: ContagemDeAguaAdapter e HabitoAdapter seguem a mesma sequência.<br/>Muda só a tradução dentro do Adapter.
