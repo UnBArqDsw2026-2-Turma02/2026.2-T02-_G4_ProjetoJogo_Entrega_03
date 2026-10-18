@@ -1,0 +1,174 @@
+@startuml Diagrama_observer
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 90
+skinparam ranksep 100
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+skinparam ArrowThickness 1.5
+
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+skinparam package {
+    BackgroundColor #FFFFFF
+    BorderColor #ADB5BD
+    Padding 20
+    Margin 20
+}
+
+' Espessura das bordas dos packages
+skinparam package {
+    BorderThickness 4
+}
+
+package "Observer" as PObserver {
+
+    ' Observer: notifica o pet e o gerenciador de conquistas
+    ' quando uma atividade e concluida.
+
+    together {
+        interface ObservadorAtividade <<interface>> {
+            + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+        }
+
+        abstract class AssuntoAtividade <<abstract>> {
+            - observadores: List<ObservadorAtividade>
+            + adicionarObservador(obs: ObservadorAtividade): void
+            + removerObservador(obs: ObservadorAtividade): void
+            # notificarObservadores(evento: EventoConclusaoAtividade): void
+            # publicarConclusao(categoria: CategoriaXP, xpGerado: float, usuarioReferencia: Usuario): void
+        }
+
+        class EventoConclusaoAtividade {
+            - categoria: CategoriaXP
+            - xpGerado: float
+            - usuarioReferencia: Usuario
+            + EventoConclusaoAtividade(categoria: CategoriaXP, xpGerado: float, usuarioReferencia: Usuario)
+            + getCategoria(): CategoriaXP
+            + getXPGerado(): float
+            + getUsuarioReferencia(): Usuario
+        }
+
+        class GerenciadorConquistas implements ObservadorAtividade {
+            + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+            + verificarEConcederConquistas(usuario: Usuario): void
+        }
+    }
+}
+
+package "Atividades" as PAtividades {
+
+    together {
+        class SessaoPomodoro extends AssuntoAtividade {
+            - idSessao: String
+            - tagCategoriaAtividade: CategoriaXP
+            - cicloAtual: int
+            - dataHoraInicio: DateTime
+            - dataHoraFim: DateTime
+            + iniciarCiclo(): void
+            + pausarCiclo(): void
+            + retomarCiclo(): void
+            + finalizarCicloComSucesso(): void
+            + calcularRecompensaExperiencia(): float
+        }
+
+        class Habito extends AssuntoAtividade {
+            - idHabito: String
+            - tituloHabito: String
+            - categoria: CategoriaXP
+            - sequenciaDiasStreak: int
+            + registrarCheckInDiario(): boolean
+            + calcularExperienciaGerada(): float
+        }
+
+        class ContagemDeAgua extends AssuntoAtividade {
+            - idRegistroAgua: int
+            - metaDiariaMl: int
+            - volumeConsumidoMl: int
+            + registrarIngestaoAgua(volumeMl: int): void
+            + calcularExperienciaGerada(): float
+        }
+    }
+}
+
+package "Dominio" as PDominio {
+
+    together {
+        class Usuario {
+            - idUsuario: String
+            - nomeExibicao: String
+            - sequenciaGeralDias: int
+            + autenticarAcesso(): boolean
+            + atualizarSequencialDiaria(): int
+            + obterHistoricoDesempenho(): void
+            + obterConquistas(): List<Conquista>
+        }
+
+        class PetVirtual implements ObservadorAtividade {
+            - nomePet: String
+            - nivel: int
+            - peso: int
+            - experienciasPorCategorias: float[5]
+            - experienciaTotal: float
+            + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+        }
+
+        class Conquista {
+            - idConquista: String
+            - tituloConquista: String
+            - descricaoRequisito: String
+            - foiDesbloqueada: boolean
+            + concederRecompensa(pet: PetVirtual): void
+        }
+    }
+
+    enum CategoriaXP <<enumeration>> {
+        INTELECTUAL
+        SABEDORIA
+        ZEN
+        ATLETICO
+        HIDRATACAO
+    }
+}
+
+' Organizacao visual dos packages
+
+PObserver -[hidden]right- PAtividades
+PAtividades -[hidden]right- PDominio
+
+' Organizacao visual dos elementos
+
+EventoConclusaoAtividade -[hidden]right- ObservadorAtividade
+GerenciadorConquistas -[hidden]down- EventoConclusaoAtividade
+
+PetVirtual -[hidden]down- GerenciadorConquistas
+
+SessaoPomodoro -[hidden]down- Habito
+Habito -[hidden]down- ContagemDeAgua
+
+' Relacionamentos do Observer
+
+AssuntoAtividade "0..*" -- "0..*" ObservadorAtividade
+
+AssuntoAtividade .down.> EventoConclusaoAtividade 
+ObservadorAtividade .left.> EventoConclusaoAtividade 
+
+Usuario "1" *-- "1" PetVirtual
+Usuario "1" *-- "0..*" AssuntoAtividade
+Usuario "1" o-- "0..*" Conquista
+
+GerenciadorConquistas ..> Conquista
+
+EventoConclusaoAtividade ..> CategoriaXP
+AssuntoAtividade ..> CategoriaXP
+EventoConclusaoAtividade ..> Usuario
+
+@enduml

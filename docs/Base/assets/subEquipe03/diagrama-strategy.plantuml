@@ -1,0 +1,221 @@
+@startuml Diagrama_Classes_Base
+
+left to right direction
+
+skinparam ClassAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 140
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+skinparam ArrowThickness 1.5
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+skinparam package {
+    BorderThickness 2
+    Padding 20
+}
+
+' PADRÃO STRATEGY - CÁLCULO DE EXPERIÊNCIA (XP)
+package "Strategy - Cálculo de XP" {
+
+
+together {
+interface CalculoXPStrategy <<interface>> {
+  + calcularXP(dadosContexto: Map<string, Object>): float
+  }
+  
+
+class CalculoXPAguaStrategy {
+  - xpMetaCompleta: float = 50.0
+  + calcularXP(dadosContexto: Map<string, Object>): float
+  }
+
+class CalculoXPHabitoStrategy { 
+  - xpBaseCheckIn: float = 15.0 
+  - multiplicadorMaximo: float = 3.0 
+  + calcularXP(dadosContexto: Map<string, Object>): float
+  }
+
+class CalculoXPPomodoroStrategy { 
+  - fatorXPPorMinuto: float = 2.0 
+  - bonusCicloConcluido: float = 10.0 
+  + calcularXP(dadosContexto: Map<String, Object>): float
+  }
+}
+' Realização da interface Strategy pelas estratégias concretas 
+CalculoXPAguaStrategy ..|> CalculoXPStrategy 
+CalculoXPHabitoStrategy ..|> CalculoXPStrategy 
+CalculoXPPomodoroStrategy ..|> CalculoXPStrategy
+}
+
+
+' Classes do dominio
+
+class Conquista {
+    - idConquista: String
+    - tituloConquista: String
+    - descricaoRequisito: String
+    - pontosExperienciaRecompensa: float
+    - foiDesbloqueada: boolean
+    - dataDesbloqueio: Date
+    + validarRequisitoGeral(usuario: Usuario): boolean
+    + concederRecompensa(pet: PetVirtual): void
+}
+
+class PetVirtual {
+    - nomePet: String
+    - nivel: int
+    - faseVida: FaseVidaPet
+    - peso: int
+    - experienciasPorCategorias: float[5]
+    - experienciaTotal: float
+    + acumularExperiencia(categoria: CategoriaXP, pontosXp: float): void
+    + avaliarEvolucaoPorAfinidade(): void
+}
+
+class Usuario {
+    - idUsuario: String
+    - nomeExibicao: String
+    - sequenciaGeralDias: int
+    + autenticarAcesso(): boolean
+    + atualizarSequencialDiaria(): int
+    + obterHistoricoDesempenho(): void
+}
+
+class ContagemDeAgua {
+    - idRegistroAgua: int
+    - metaDiariaMl: int
+    - volumeConsumidoMl: int
+    - dataRegistro: Date
+    - estrategiaXP: CalculoXPStrategy
+    + registrarIngestaoAgua(volumeMl: int): void
+    + calcularPercentualAlcancado(): float
+    + validarConsumoMeta(): boolean
+    + reiniciarContador(): void
+    + setEstrategiaXP(estrategia: CalculoXPStrategy): void
+    + calcularExperienciaGerada(): float
+}
+
+class Habito {
+    - idHabito: String
+    - tituloHabito: String
+    - categoria: CategoriaXP
+    - sequenciaDiasStreak: int
+    - dataUltimoCheckIn: Date
+    - dataUltimoCongelamento: Date
+    - diasAtivosSemana: DiaSemana[1..7]
+    - estaCongeladoHoje: boolean
+    - diasCooldownCongelamento: int = 7
+    - estrategiaXP: CalculoXPStrategy
+    + registrarCheckInDiario(): boolean
+    + verificarQuebraDeStreak(): void
+    + podeCongelarStreak(): boolean
+    + acionarCongelamentoStreak(): boolean
+    + setEstrategiaXP(estrategia: CalculoXPStrategy): void
+    + calcularExperienciaGerada(): float
+}
+
+class SessaoPomodoro {
+    - idSessao: String
+    - tagCategoriaAtividade: CategoriaXP
+    - cicloAtual: int
+    - dataHoraInicio: DateTime
+    - dataHoraFim: DateTime
+    - foiConcluida: boolean
+    - estrategiaXP: CalculoXPStrategy
+    + iniciarCiclo(): void
+    + pausarCiclo(): void
+    + retomarCiclo(): void
+    + verificarPausaLonga(): boolean
+    + finalizarCicloComSucesso(): void
+    + setEstrategiaXP(estrategia: CalculoXPStrategy): void
+    + calcularRecompensaExperiencia(): float
+}
+
+' Enumeracoes
+
+enum CategoriaXP <<enumeration>> {
+    INTELECTUAL
+    SABEDORIA
+    ZEN
+    ATLETICO
+    HIDRATACAO
+}
+
+enum FaseVidaPet <<enumeration>> {
+    BEBE
+    CRIANCA
+    ADOLESCENTE
+    ADULTO
+}
+
+enum DiaSemana <<enumeration>> {
+    SEGUNDA
+    TERCA
+    QUARTA
+    QUINTA
+    SEXTA
+    SABADO
+    DOMINGO
+}
+
+' Relacionamentos
+
+' Usuario e suas entidades
+
+Usuario "1" *-- "1" PetVirtual
+Usuario "1" *-- "0..*" Habito
+Usuario "1" o-- "0..*" SessaoPomodoro
+Usuario "1" o-- "0..*" Conquista
+
+' Dependencias do PetVirtual
+
+Conquista ..> PetVirtual
+ContagemDeAgua ..> PetVirtual
+Habito ..> PetVirtual
+SessaoPomodoro ..> PetVirtual
+
+' Dependencia de Usuario
+
+Conquista ..> Usuario
+
+' Organizacao visual
+
+Usuario -[hidden]right- PetVirtual
+PetVirtual -[hidden]down- Habito
+Habito -[hidden]right- SessaoPomodoro
+
+PetVirtual -[hidden]left- Conquista
+PetVirtual -[hidden]right- ContagemDeAgua
+
+ContagemDeAgua -[hidden]right- CategoriaXP
+CategoriaXP -[hidden]down- FaseVidaPet
+FaseVidaPet -[hidden]down- DiaSemana
+
+' Relacionamentos com enumeracoes
+
+PetVirtual ..> FaseVidaPet
+PetVirtual ..> CategoriaXP
+
+ContagemDeAgua ..> CategoriaXP
+Habito ..> CategoriaXP
+Habito ..> DiaSemana
+SessaoPomodoro ..> CategoriaXP
+
+' Relacionamento do Contexto com a Estratégia (Padrão Strategy)
+'ContagemDeAgua o--> CalculoXPStrategy 
+'Habito o--> CalculoXPStrategy 
+'SessaoPomodoro o--> CalculoXPStrategy 
+
+ContagemDeAgua "1" --> "1" CalculoXPStrategy
+Habito "1" --> "1" CalculoXPStrategy 
+SessaoPomodoro "1" --> "1" CalculoXPStrategy 
+
+@enduml
