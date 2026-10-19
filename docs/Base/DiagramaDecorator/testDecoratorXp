@@ -1,0 +1,108 @@
+import unittest
+from datetime import date
+
+from decorator_xp import (
+    BonusFimDeSemanaDecorator,
+    BonusSequenciaDecorator,
+    BonusXPDecorator,
+    CalculadoraXP,
+    CategoriaXP,
+    Habito,
+    XPBaseHabito,
+    montar_calculadora,
+)
+
+QUARTA = date(2026, 10, 14)
+SABADO = date(2026, 10, 17)
+DOMINGO = date(2026, 10, 18)
+
+
+def novo_habito(streak: int = 0) -> Habito:
+    return Habito("Beber água", CategoriaXP.HIDRATACAO, sequencia_dias_streak=streak)
+
+
+class TestDecoratorXP(unittest.TestCase):
+    def test_sem_decorators_retorna_xp_base(self):
+        """Sem nenhuma camada, o XP é o XP base do hábito (10,00)"""
+        calc = XPBaseHabito(novo_habito())
+        self.assertAlmostEqual(calc.calcular_experiencia_gerada(), 10.0)
+
+    def test_bonus_sequencia_por_faixa(self):
+        """Bônus de sequência: +10% a cada 7 dias, com teto de +50%"""
+        casos = {0: 10.0, 6: 10.0, 7: 11.0, 13: 11.0, 14: 12.0, 28: 14.0, 35: 15.0, 100: 15.0}
+        for streak, esperado in casos.items():
+            with self.subTest(streak=streak):
+                calc = BonusSequenciaDecorator(XPBaseHabito(novo_habito()), streak)
+                self.assertAlmostEqual(calc.calcular_experiencia_gerada(), esperado)
+
+    def test_streak_negativo_nao_gera_bonus_nem_penalidade(self):
+        """Sequência negativa não gera bônus nem penalidade"""
+        calc = BonusSequenciaDecorator(XPBaseHabito(novo_habito()), -5)
+        self.assertAlmostEqual(calc.calcular_experiencia_gerada(), 10.0)
+
+    def test_bonus_fim_de_semana(self):
+        """Bônus de fim de semana: +20% no sábado e no domingo, nada na quarta"""
+        casos = {QUARTA: 10.0, SABADO: 12.0, DOMINGO: 12.0}
+        for data, esperado in casos.items():
+            with self.subTest(data=data):
+                calc = BonusFimDeSemanaDecorator(XPBaseHabito(novo_habito()), data)
+                self.assertAlmostEqual(calc.calcular_experiencia_gerada(), esperado)
+
+    def test_bonus_combinados(self):
+        """Sequência de 14 dias e sábado: os dois bônus se combinam (14,40)"""
+        # streak 14 (+20%) e sábado (+20%): 10 * 1.2 * 1.2
+        calc = montar_calculadora(novo_habito(14), SABADO)
+        self.assertAlmostEqual(calc.calcular_experiencia_gerada(), 14.4)
+
+    def test_ordem_das_camadas_nao_altera_resultado_com_percentuais(self):
+        """A ordem das camadas não muda o resultado quando os bônus são percentuais"""
+        habito = novo_habito(14)
+        a = BonusFimDeSemanaDecorator(
+            BonusSequenciaDecorator(XPBaseHabito(habito), 14), SABADO
+        )
+        b = BonusSequenciaDecorator(
+            BonusFimDeSemanaDecorator(XPBaseHabito(habito), SABADO), 14
+        )
+        self.assertAlmostEqual(a.calcular_experiencia_gerada(), b.calcular_experiencia_gerada())
+
+    def test_cliente_pode_ativar_so_algumas_camadas(self):
+        """O cliente pode empilhar só algumas camadas, ou nenhuma"""
+        habito = novo_habito(14)
+        so_fds = montar_calculadora(habito, SABADO, bonus_sequencia=False)
+        so_seq = montar_calculadora(habito, SABADO, bonus_fim_de_semana=False)
+        nenhum = montar_calculadora(
+            habito, SABADO, bonus_sequencia=False, bonus_fim_de_semana=False
+        )
+        self.assertAlmostEqual(so_fds.calcular_experiencia_gerada(), 12.0)
+        self.assertAlmostEqual(so_seq.calcular_experiencia_gerada(), 12.0)
+        self.assertAlmostEqual(nenhum.calcular_experiencia_gerada(), 10.0)
+
+    def test_habito_original_nao_e_alterado(self):
+        """A classe Habito original não é alterada pelo padrão"""
+        habito = novo_habito(14)
+        antes = habito.calcular_experiencia_gerada()
+        montar_calculadora(habito, SABADO).calcular_experiencia_gerada()
+        self.assertEqual(habito.calcular_experiencia_gerada(), antes)
+        self.assertEqual(habito.sequencia_dias_streak, 14)
+
+    def test_todos_os_participantes_sao_calculadora_xp(self):
+        """Componente base e decorators respondem pela mesma interface"""
+        base = XPBaseHabito(novo_habito())
+        sequencia = BonusSequenciaDecorator(base, 7)
+        fim_de_semana = BonusFimDeSemanaDecorator(sequencia, SABADO)
+        for obj in (base, sequencia, fim_de_semana):
+            self.assertIsInstance(obj, CalculadoraXP)
+        self.assertIsInstance(sequencia, BonusXPDecorator)
+        self.assertIsInstance(fim_de_semana, BonusXPDecorator)
+
+    def test_descrever_lista_as_camadas_na_ordem_de_empilhamento(self):
+        """descrever() lista as camadas na ordem em que foram empilhadas"""
+        texto = montar_calculadora(novo_habito(14), SABADO).descrever()
+        self.assertIn("XP base (10.00)", texto)
+        self.assertLess(texto.index("sequência"), texto.index("fim de semana"))
+        self.assertIn("+20% (14 dias)", texto)
+        self.assertIn("+20% (SABADO)", texto)
+
+
+if __name__ == "__main__":
+    unittest.main()

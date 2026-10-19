@@ -1,0 +1,122 @@
+classDiagram
+    direction TB
+
+    class CreditadorXP {
+        - chavesCreditadas: Set~String~
+        + creditar(fonte: FonteXP) ResultadoCredito
+    }
+
+    class ResultadoCredito {
+        <<enumeration>>
+        CREDITADO
+        REGRA_NAO_CUMPRIDA
+        JA_CREDITADO
+    }
+
+    class FonteXP {
+        <<interface>>
+        + podeGerarXP() boolean
+        + obterCategoria() CategoriaXP
+        + obterPontos() int
+        + obterChaveCredito() String
+    }
+
+    class SessaoPomodoroAdapter {
+        - sessao: SessaoPomodoro
+        + podeGerarXP() boolean
+        + obterCategoria() CategoriaXP
+        + obterPontos() int
+        + obterChaveCredito() String
+    }
+
+    class ContagemDeAguaAdapter {
+        - contagem: ContagemDeAgua
+        + podeGerarXP() boolean
+        + obterCategoria() CategoriaXP
+        + obterPontos() int
+        + obterChaveCredito() String
+    }
+
+    class HabitoAdapter {
+        - habito: Habito
+        - data: Date
+        + podeGerarXP() boolean
+        + obterCategoria() CategoriaXP
+        + obterPontos() int
+        + obterChaveCredito() String
+    }
+
+    class SessaoPomodoro {
+        - statusSessao: String
+        - tempoDecorrido: int
+        + iniciarSessao() void
+        + finalizarSessao() void
+        + calcularXPGanho() int
+    }
+
+    class ContagemDeAgua {
+        - volumeML: int
+        - limiteDiario: int
+        - dataRegistro: Date
+        + adicionarVolume(ml: int) void
+        + validarMetaDiaria() boolean
+        + calcularXPGanho() int
+        + resetarDiario() void
+    }
+
+    class Habito {
+        - streakAtual: int
+        - dataUltimaCompletacao: Date
+        + marcarConcluido() void
+        + verificarConclusaoAoDia(data: Date) boolean
+        + calcularXPGanho() int
+    }
+
+    class PetVirtual {
+        - vetorXP: int[5]
+        + adicionarXP(categoria: CategoriaXP, pontos: int) void
+        + calcularAtividadeMaxima() CategoriaXP
+        + determinarEvolucao() Evolucao
+        + obterEstadoAtual() String
+    }
+
+    class Evolucao {
+        <<enumeration>>
+        NEUTRO
+        ESTUDIOSO
+        LEITOR
+        ZEN
+        ATLETICO
+        HIDRATADO
+        DESMOTIVADO
+    }
+
+    class CategoriaXP {
+        <<enumeration>>
+        INTELECTUAL
+        SABEDORIA
+        ZEN
+        ATLETICO
+        HIDRATACAO
+    }
+
+    CreditadorXP ..> FonteXP : usa
+    CreditadorXP ..> ResultadoCredito : retorna
+    CreditadorXP "1" --> "1" PetVirtual : creditaXP
+
+    FonteXP <|.. SessaoPomodoroAdapter
+    FonteXP <|.. ContagemDeAguaAdapter
+    FonteXP <|.. HabitoAdapter
+
+    SessaoPomodoroAdapter "1" --> "1" SessaoPomodoro : adapta
+    ContagemDeAguaAdapter "1" --> "1" ContagemDeAgua : adapta
+    HabitoAdapter "1" --> "1" Habito : adapta
+
+    PetVirtual "1" --> "5" CategoriaXP : vetorXPMapeadoPor
+    PetVirtual "1" --> "1" Evolucao : evoluiPara
+
+    note for CreditadorXP "Client: depende só de FonteXP"
+    note for FonteXP "Target"
+    note for SessaoPomodoroAdapter "podeGerarXP(): statusSessao == CONCLUIDA<br>obterCategoria(): categoria da sessão<br>(INTELECTUAL ou SABEDORIA)"
+    note for ContagemDeAguaAdapter "podeGerarXP(): validarMetaDiaria()<br>obterCategoria(): HIDRATACAO"
+    note for HabitoAdapter "podeGerarXP(): verificarConclusaoAoDia(data)<br>obterCategoria(): categoria do hábito"
