@@ -1,0 +1,152 @@
+@startuml Diagrama_state_v2
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 100
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+skinparam ArrowThickness 1.5
+
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+skinparam package {
+    BorderThickness 2
+    Padding 20
+}
+
+package "State - Pomodoro" as PacotePomodoro {
+
+    interface EstadoPomodoro <<interface>> {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+    }
+
+    class EstadoConfigurando {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+    }
+
+    class PomodoroFocoEmAndamento {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+    }
+
+    class PomodoroPausado {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+    }
+
+    class PomodoroConcluido {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+    }
+
+    class SessaoPomodoro {
+        - estadoAtual: EstadoPomodoro
+        + setEstado(novoEstado: EstadoPomodoro): void
+        + iniciarCiclo(): void
+        + pausarCiclo(): void
+        + retomarCiclo(): void
+        + finalizarCicloComSucesso(): void
+    }
+
+    ' Realização da interface
+    EstadoConfigurando ..|> EstadoPomodoro
+    PomodoroFocoEmAndamento ..|> EstadoPomodoro
+    PomodoroPausado ..|> EstadoPomodoro
+    PomodoroConcluido ..|> EstadoPomodoro
+
+    ' Associação do contexto ao estado
+    SessaoPomodoro --> EstadoPomodoro
+
+    ' Restrições de layout
+    EstadoConfigurando -[hidden]right-> PomodoroFocoEmAndamento
+    PomodoroFocoEmAndamento -[hidden]right-> PomodoroPausado
+    PomodoroPausado -[hidden]right-> PomodoroConcluido
+
+    EstadoPomodoro -[hidden]down-> EstadoConfigurando
+    EstadoConfigurando -[hidden]down-> SessaoPomodoro
+}
+
+package "State - Pet Virtual" as PacotePet {
+
+    interface EstadoPet <<interface>> {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+    }
+
+    class EstadoBebe {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+    }
+
+    class EstadoCrianca {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+    }
+
+    class EstadoAdolescente {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+    }
+
+    class EstadoAdulto {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+    }
+
+    class PetVirtual {
+        - estadoAtual: EstadoPet
+        + setEstado(novoEstado: EstadoPet): void
+        + acumularExperiencia(categoria: CategoriaXP, pontos: float): void
+    }
+
+    enum CategoriaXP <<enumeration>> {
+        INTELECTUAL
+        SABEDORIA
+        ZEN
+        ATLETICO
+        HIDRATACAO
+    }
+
+    ' Realização da interface
+    EstadoBebe ..|> EstadoPet
+    EstadoCrianca ..|> EstadoPet
+    EstadoAdolescente ..|> EstadoPet
+    EstadoAdulto ..|> EstadoPet
+
+    ' Associação do contexto ao estado
+    PetVirtual --> EstadoPet
+
+    ' Dependência da categoria
+    PetVirtual ..> CategoriaXP
+
+    ' Restrições de layout
+    EstadoBebe -[hidden]right-> EstadoCrianca
+    EstadoCrianca -[hidden]right-> EstadoAdolescente
+    EstadoAdolescente -[hidden]right-> EstadoAdulto
+
+    EstadoPet -[hidden]down-> EstadoBebe
+    EstadoBebe -[hidden]down-> PetVirtual
+    PetVirtual -[hidden]right-> CategoriaXP
+}
+
+@enduml
