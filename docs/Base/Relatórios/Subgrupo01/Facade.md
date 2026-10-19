@@ -19,7 +19,7 @@ A preparação foi organizada em etapas, separando os artefatos já elaborados d
 | Modelagem dinâmica | Ordenação das chamadas e tratamento do reenvio da mesma conclusão. | Diagrama de sequência proposto nesta seção. |
 | Revisão da modelagem | Análise e ajustes dos diagramas e das responsabilidades das classes por Guilherme. | Modelo revisado por Guilherme. |
 | Implementação | Implementar o recorte independente em Python e verificar os cenários. | Código e demonstração executados; sete testes passaram. |
-| Evidências | Gravar execução, publicar os arquivos e relacionar a contribuição ao commit. | Pendente. |
+| Evidências | Registrar a apresentação e a execução, relacionando vídeo, modelo, código e participação. | [Vídeo publicado](https://youtu.be/QQM7oWCMstk) e vinculado ao relatório, às evidências e à participação. |
 
 #### GoF Estrutural
 
@@ -262,20 +262,27 @@ No ambiente local desta preparação, a execução foi verificada com o Python d
 | Água, 20 XP de hidratação | Dois registros e segunda conquista desbloqueada; pet continua ESTUDIOSO. |
 | Nova ocorrência, 40 XP de hidratação | Hidratação totaliza 60 XP; pet HIDRATADO, três registros e nenhum desbloqueio repetido. |
 
-**Vídeo obrigatório: pendente.** Mostrar o problema e o UML, apresentar os participantes no código e executar os cenários. Comparar os estados antes e depois da chamada para comprovar o comportamento. Após a gravação, inserir o link e o commit efetivamente demonstrado no relatório e na página de Evidências.
+###### Vídeo do padrão em execução
 
-**Links permanentes do código:** [Implementação](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/7e8cd5779f12df89b970835819eb5c35f9cf3ea2/docs/exemplos/facade/jogo_facade.py) · [Demonstração](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/bb84e13a20ecffd8a1ef04dd083f0c045c4250ec/docs/exemplos/facade/demo.py) · [Testes](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/74c0200c9c1470deffa12de092975adb6ee5a59a/docs/exemplos/facade/test_jogo_facade.py). Os links ficam acessíveis no GitHub após o envio destes commits. O registro da execução local está na [página de Evidências](/Base/Evidências/1.1.1.SubEquipe_01.md#execução-local-do-facade).
+<div class="evidence-slot"><strong>Vídeo do padrão em execução</strong>
+<p>Apresentação de Guilherme Negreiros Pereira sobre o Facade aplicado ao fluxo de conclusão de atividades do jogo, com a explicação do padrão e a demonstração do código em execução.</p>
+<div style="position:relative;width:100%;max-width:860px;aspect-ratio:16/9;margin:0.5rem 0;">
+  <iframe src="https://www.youtube.com/embed/QQM7oWCMstk" title="Padrão Facade — conclusão de atividades do PetVirtual — Guilherme Negreiros Pereira" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+</div>
+<p><a href="https://youtu.be/QQM7oWCMstk" target="_blank" rel="noopener">▶ Abrir no YouTube</a></p></div>
+
+**Links permanentes do código:** [Implementação](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/7e8cd5779f12df89b970835819eb5c35f9cf3ea2/docs/exemplos/facade/jogo_facade.py) · [Demonstração](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/bb84e13a20ecffd8a1ef04dd083f0c045c4250ec/docs/exemplos/facade/demo.py) · [Testes](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/74c0200c9c1470deffa12de092975adb6ee5a59a/docs/exemplos/facade/test_jogo_facade.py). O registro da execução local está na [página de Evidências](/Base/Evidências/1.1.1.SubEquipe_01.md#execução-local-do-facade).
 
 ##### Rastreabilidade das decisões
 
 | Origem | Decisão nesta proposta | Elemento do modelo | Situação |
 |---|---|---|---|
 | Entrega 01: atividades relacionadas ao desenvolvimento do pet [3] | Processar consequências da conclusão | Entrada da fachada e relação com pet | Modelado |
-| Entrega 02: XP por categoria e operações de evolução [4] | Delegar XP e evolução ao pet | `PetVirtual` | Modelado, implementado e verificado |
-| Entrega 02: histórico e conquistas [4] | Registrar ocorrência e avaliar o usuário | `HistoricoUsuario`, `Conquista`, `Usuario` | Registro proposto; avaliação preservada |
-| Aula e dissertação: simplificação de acesso [1][2] | Uma operação pública para coordenar subsistemas | `JogoFacade` e `ClienteDemo` | Modelado |
-| Decisão local da demonstração | Evitar reprocessar a mesma ocorrência | `possuiConclusao()` | Implementado e verificado |
-| Roteiro do FOCO_02 [5] | Relacionar modelo, código, vídeo e autoria | Relatório, Evidências e Participações | Código verificado e commits vinculados; vídeo e envio ao GitHub pendentes |
+| Entrega 02: XP por categoria e operações de evolução [4] | Delegar XP e evolução ao pet | `PetVirtual` | Modelado, implementado e verificado · [Execução em vídeo](https://youtu.be/QQM7oWCMstk) |
+| Entrega 02: histórico e conquistas [4] | Registrar ocorrência e avaliar o usuário | `HistoricoUsuario`, `Conquista`, `Usuario` | Implementado, com avaliação após o registro · [Vídeo](https://youtu.be/QQM7oWCMstk) |
+| Aula e dissertação: simplificação de acesso [1][2] | Uma operação pública para coordenar subsistemas | `JogoFacade` e `ClienteDemo` | Modelado e implementado · [Vídeo](https://youtu.be/QQM7oWCMstk) |
+| Decisão local da demonstração | Evitar reprocessar a mesma ocorrência | `possuiConclusao()` | Implementado e verificado · [Vídeo](https://youtu.be/QQM7oWCMstk) |
+| Roteiro do FOCO_02 [5] | Relacionar modelo, código, vídeo e autoria | Relatório, Evidências e Participações | Modelos, código, commits e [vídeo publicado](https://youtu.be/QQM7oWCMstk) vinculados |
 
 ##### Referências utilizadas por Guilherme — Facade
 
