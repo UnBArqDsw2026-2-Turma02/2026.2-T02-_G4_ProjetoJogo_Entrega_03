@@ -1,0 +1,7 @@
+# Ignorar arquivos compilados do Java
+*.class
+
+# Ignorar pastas comuns de saída do VS Code e Java
+bin/
+out/
+build/
