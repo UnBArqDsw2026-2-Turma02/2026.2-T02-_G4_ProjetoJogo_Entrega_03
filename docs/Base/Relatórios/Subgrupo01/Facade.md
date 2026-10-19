@@ -262,6 +262,36 @@ No ambiente local desta preparação, a execução foi verificada com o Python d
 | Água, 20 XP de hidratação | Dois registros e segunda conquista desbloqueada; pet continua ESTUDIOSO. |
 | Nova ocorrência, 40 XP de hidratação | Hidratação totaliza 60 XP; pet HIDRATADO, três registros e nenhum desbloqueio repetido. |
 
+###### Testes automatizados do Facade
+
+Os testes complementam a demonstração do padrão e estão no arquivo `test_jogo_facade.py`, utilizando o módulo `unittest` da biblioteca padrão do Python. O vídeo apresenta o Facade e sua demonstração em execução; a verificação automatizada está documentada separadamente nesta seção.
+
+O método `setUp()` prepara um usuário com pet, histórico e duas conquistas, além da fachada correspondente, antes de cada teste. Assim, cada caso parte de um estado próprio e não depende das alterações realizadas pelos demais.
+
+| Verificação | Procedimento | Resultado esperado |
+|---|---|---|
+| Fluxo completo e histórico atualizado | Processar uma conclusão com 50 XP intelectual. | Retornar PROCESSADA, adicionar XP, alterar a forma para ESTUDIOSO, registrar uma conclusão e desbloquear apenas a primeira conquista. A avaliação considera o histórico já atualizado. |
+| Reenvio por outra fachada | Processar a mesma ocorrência novamente usando outra instância de `JogoFacade` para o mesmo usuário. | Retornar JA_REGISTRADA, mantendo os pontos e o único registro, sem novos desbloqueios. |
+| Nova ocorrência e outra categoria predominante | Após o Pomodoro, processar uma nova conclusão com 60 XP de hidratação. | Preservar o XP intelectual, alterar a forma para HIDRATADO, registrar a segunda ocorrência e desbloquear apenas a segunda conquista. |
+| Entradas inválidas | Informar identificador vazio, apenas espaços ou nulo; categoria fora de `CategoriaXP`; pontos negativos, fracionários ou booleanos. | Lançar `ValueError` antes de alterar XP, histórico ou conquistas. |
+| Isolamento entre usuários | Processar uma conclusão para um usuário e consultar outro usuário recém-instanciado. | O segundo usuário permanece com XP zerado, histórico vazio e conquista bloqueada. |
+| Evolução por categoria | Processar separadamente uma conclusão para cada uma das cinco categorias. | Obter ESTUDIOSO, LEITOR, ZEN, ATLETICO ou HIDRATADO, conforme a categoria predominante. |
+| Empate de experiência | Conceder 50 XP intelectual e, depois, 50 XP ZEN. | Preservar a forma ESTUDIOSO, conforme a regra ilustrativa de empate adotada no exemplo. |
+
+Os casos de entrada inválida e evolução por categoria utilizam `subTest()` para verificar várias entradas dentro de um mesmo método. O total de **sete testes** corresponde aos sete métodos da classe `TestJogoFacade`.
+
+Para reproduzir a verificação, executar na raiz do repositório:
+
+```powershell
+python -m unittest discover -s .\docs\exemplos\facade -p "test_*.py" -v
+```
+
+**Resultado registrado:** os sete testes passaram na execução de 17/10/2026, com o resumo `Ran 7 tests` seguido de `OK`. O tempo de execução pode variar entre ambientes.
+
+**Código dos testes:** [versão permanente no repositório](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/blob/74c0200c9c1470deffa12de092975adb6ee5a59a/docs/exemplos/facade/test_jogo_facade.py).
+
+Essas verificações cobrem o comportamento do recorte independente em memória. Não validam persistência, concorrência, recuperação de falhas entre etapas ou integração com os outros padrões do subgrupo.
+
 ###### Vídeo do padrão em execução
 
 <div class="evidence-slot"><strong>Vídeo do padrão em execução</strong>
