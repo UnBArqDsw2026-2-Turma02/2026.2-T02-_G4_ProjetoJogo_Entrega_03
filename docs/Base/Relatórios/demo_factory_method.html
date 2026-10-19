@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factory Method em execução — Subgrupo 02</title>
+<style>
+  :root {
+    --fundo: #f6f8fb; --superficie: #ffffff; --texto: #172033; --suave: #5b6472;
+    --borda: #e1e7ef; --acento: #1f7a5a; --acento-forte: #145c43;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 26px 20px 40px; background: var(--fundo); color: var(--texto);
+    font: 17px/1.6 -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 1500px; margin: 0 auto; }
+  header { margin-bottom: 18px; }
+  h1 { margin: 0 0 4px; font-size: 30px; }
+  .sub { margin: 0; color: var(--suave); font-size: 17px; }
+
+  .provas {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;
+    margin: 18px 0; padding: 0; list-style: none;
+  }
+  .provas li {
+    padding: 13px 16px; border: 1px solid var(--borda); border-left: 4px solid var(--acento);
+    border-radius: 10px; background: var(--superficie); font-size: 15px; color: #374151;
+  }
+
+  .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 18px 0 14px; }
+  button {
+    padding: 13px 26px; border: 0; border-radius: 9px; background: var(--acento);
+    color: #fff; cursor: pointer; font-size: 17px; font-weight: 700;
+  }
+  button:hover { background: var(--acento-forte); }
+  button:disabled { background: #9bb3ab; cursor: default; }
+  select { padding: 9px 12px; border: 1px solid var(--borda); border-radius: 8px; font-size: 15px; }
+  .estado { color: var(--suave); font-size: 15px; }
+
+  .palco { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 1150px) { .palco { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
+
+  .painel { display: flex; flex-direction: column; min-width: 0; }
+  .painel h2 {
+    margin: 0 0 8px; font-size: 14px; font-weight: 800; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--acento-forte);
+  }
+  .painel .fonte { margin: 0 0 10px; color: var(--suave); font-size: 14px; }
+
+  pre {
+    flex: 1; margin: 0; padding: 18px 20px; border-radius: 12px; overflow: auto;
+    background: #0f172a; color: #e2e8f0;
+    font: 15px/1.62 ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  #codigo { max-height: 62vh; }
+  #codigo .kw { color: #c4b5fd; }
+  #codigo .str { color: #fdba74; }
+  #codigo .com { color: #64748b; font-style: italic; }
+  #codigo .destaque { display: block; background: rgba(250, 204, 21, .16); box-shadow: inset 3px 0 #facc15; }
+
+  #terminal { height: 62vh; white-space: pre-wrap; word-break: break-word; }
+  #terminal .cmd { color: #7dd3fc; }
+  #terminal .ok { color: #86efac; font-weight: 700; }
+  #terminal .err { color: #fca5a5; }
+  #terminal .tit { color: #fcd34d; margin-top: 10px; }
+
+  .rodape { margin-top: 20px; color: var(--suave); font-size: 15px; }
+  .rodape a { color: var(--acento-forte); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Factory Method em execução</h1>
+    <p class="sub">Entrega 03 · Subgrupo 02 · Padrões Criacionais — João Vitor Mendonça Merlin (@jvopBR)</p>
+  </header>
+
+  <ul class="provas">
+    <li>A página carrega o <strong>mesmo arquivo</strong> entregue no repositório, sem cópia nem adaptação.</li>
+    <li>Os três criadores concretos reutilizam o único fluxo <strong>registrarAtividade()</strong> do criador abstrato.</li>
+    <li>Valem as regras do projeto: <strong>RN01</strong>, <strong>RN02</strong> e <strong>RN03</strong>.</li>
+    <li>Ao cruzar o limiar de XP, o mascote evolui de <strong>FILHOTE</strong> para <strong>JOVEM</strong>.</li>
+  </ul>
+
+  <div class="barra">
+    <button id="executar" type="button">▶ Executar</button>
+    <label>Ritmo
+      <select id="ritmo">
+        <option value="140">rápido</option>
+        <option value="320" selected>normal</option>
+        <option value="650">devagar</option>
+      </select>
+    </label>
+    <span class="estado" id="estado">pronto</span>
+  </div>
+
+  <div class="palco">
+    <section class="painel">
+      <h2>O código do padrão</h2>
+      <p class="fonte">Trecho lido em tempo real de <code>factory_method_atividades.js</code> — o criador abstrato, onde fica o <em>factory method</em>.</p>
+      <pre id="codigo">carregando o arquivo…</pre>
+    </section>
+
+    <section class="painel">
+      <h2>A execução</h2>
+      <p class="fonte">Saída real de <code>demonstrar()</code>, a mesma do comando <code>node factory_method_atividades.js</code>.</p>
+      <pre id="terminal"></pre>
+    </section>
+  </div>
+
+  <p class="rodape">
+    Código-fonte completo: <a href="factory_method_atividades.js">factory_method_atividades.js</a> ·
+    Relatório: <a href="../../index.html#/Base/Relat%C3%B3rios/1.1.2.SubEquipe_02">Subgrupo 02 — Padrões Criacionais</a>
+  </p>
+</main>
+
+<script src="factory_method_atividades.js"></script>
+<script>
+  const terminal = document.getElementById('terminal');
+  const painelCodigo = document.getElementById('codigo');
+  const botao = document.getElementById('executar');
+  const estado = document.getElementById('estado');
+  const ritmo = document.getElementById('ritmo');
+  const QUEBRA = String.fromCharCode(10);
+
+  /* ---------- painel da esquerda: o código real do criador abstrato ---------- */
+  let linhasDoCodigo = [];
+
+  function escapar(t) {
+    return t.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+  }
+
+  // Realce linha a linha, em passada única, para nunca reprocessar a marcação gerada.
+  function pintarLinha(linha) {
+    if (/^\s*(\/\/|\/\*|\*)/.test(linha)) {
+      return '<span class="com">' + escapar(linha) + '</span>';
+    }
+    return escapar(linha).replace(
+      /('[^']*'|`[^`]*`)|\b(class|extends|const|let|return|throw|new|function|if|else|try|finally|this)\b/g,
+      function (m, str, kw) {
+        return str ? '<span class="str">' + str + '</span>' : '<span class="kw">' + kw + '</span>';
+      }
+    );
+  }
+
+  function renderizarCodigo(regexDestaque) {
+    painelCodigo.innerHTML = linhasDoCodigo.map(function (linha) {
+      const pintada = pintarLinha(linha);
+      return regexDestaque && regexDestaque.test(linha)
+        ? '<span class="destaque">' + pintada + '</span>'
+        : pintada;
+    }).join(QUEBRA);
+  }
+
+  function destacar(regex) {
+    if (linhasDoCodigo.length) renderizarCodigo(regex);
+  }
+
+  fetch('factory_method_atividades.js')
+    .then(function (r) { return r.text(); })
+    .then(function (txt) {
+      const i = txt.indexOf('class CriadorDeAtividade');
+      const j = txt.indexOf('/* ---', i);
+      linhasDoCodigo = (i >= 0 ? txt.slice(i, j > i ? j : undefined) : txt).trimEnd().split(QUEBRA);
+      renderizarCodigo(null);
+    })
+    .catch(function () {
+      // Aberta direto do disco (file://), o fetch é bloqueado: usa o código da classe já carregada.
+      linhasDoCodigo = CriadorDeAtividade.toString().split(QUEBRA);
+      renderizarCodigo(null);
+    });
+
+  /* ---------- painel da direita: executa o arquivo entregue ---------- */
+  function formatar(args) {
+    return args.map(function (a) {
+      if (a && typeof a === 'object') {
+        return '{ ' + Object.entries(a).map(function (par) {
+          return par[0] + ': ' + (typeof par[1] === 'string' ? "'" + par[1] + "'" : par[1]);
+        }).join(', ') + ' }';
+      }
+      return String(a);
+    }).join(' ');
+  }
+
+  function coletarSaida() {
+    const linhas = [];
+    const original = console.log;
+    console.log = function () { linhas.push(formatar([].slice.call(arguments))); };
+    try { demonstrar(); } finally { console.log = original; }
+    return linhas;
+  }
+
+  function classeDaLinha(linha) {
+    if (/^\[\d\]|^===/.test(linha.trim())) return 'tit';
+    if (/\[REJEITADO\]/.test(linha)) return 'err';
+    if (/\[EVOLUCAO\]/.test(linha)) return 'ok';
+    return '';
+  }
+
+  window.executarDemo = async function (intervaloMs) {
+    const espera = intervaloMs === undefined ? Number(ritmo.value) : intervaloMs;
+    botao.disabled = true;
+    estado.textContent = 'executando…';
+    terminal.innerHTML = '';
+    destacar(null);
+
+    const prompt = document.createElement('div');
+    prompt.className = 'cmd';
+    prompt.textContent = '$ node factory_method_atividades.js';
+    terminal.appendChild(prompt);
+    if (espera) await new Promise(function (r) { setTimeout(r, espera); });
+
+    const linhas = coletarSaida();
+    for (const linha of linhas) {
+      const el = document.createElement('div');
+      el.className = classeDaLinha(linha);
+      el.textContent = linha;
+      terminal.appendChild(el);
+      terminal.scrollTop = terminal.scrollHeight;
+
+      // acompanha a narração: destaca no código a parte que está agindo
+      if (/^\[\d\]/.test(linha.trim())) destacar(/criarAtividade|registrarAtividade/);
+      if (/\[REJEITADO\]/.test(linha)) destacar(/validar\(\)/);
+      if (/Estado final/.test(linha)) destacar(/receberXP|getCategoria/);
+
+      if (window.aoDesenharQuadro) await window.aoDesenharQuadro();
+      if (espera) await new Promise(function (r) { setTimeout(r, espera); });
+    }
+
+    const fim = document.createElement('div');
+    fim.className = 'ok';
+    fim.textContent = QUEBRA + '✔ Execução concluída sem erros — ' + linhas.length + ' linhas de saída.';
+    terminal.appendChild(fim);
+    terminal.scrollTop = terminal.scrollHeight;
+    if (window.aoDesenharQuadro) await window.aoDesenharQuadro();
+
+    estado.textContent = 'concluído';
+    botao.disabled = false;
+    return linhas.length;
+  };
+
+  botao.addEventListener('click', function () { window.executarDemo(); });
+</script>
+</body>
+</html>
