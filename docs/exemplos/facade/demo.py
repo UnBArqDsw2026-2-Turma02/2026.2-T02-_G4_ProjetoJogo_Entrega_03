@@ -1,4 +1,3 @@
-"""Cliente da demonstração independente do Facade. Execute a partir da raiz."""
 from jogo_facade import CategoriaXP, Conquista, JogoFacade, Usuario
 
 

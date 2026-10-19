@@ -1,8 +1,3 @@
-"""Facade independente para o jogo de pet virtual. Python 3.10+.
-
-Os subsistemas são didáticos, síncronos e em memória. Os valores de XP e os
-critérios de conquistas do exemplo não definem novas regras do projeto.
-"""
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -102,7 +97,6 @@ class Conquista:
             raise ValueError("O critério deve exigir ao menos uma conclusão.")
 
     def validarRequisitoGeral(self, usuario: "Usuario") -> bool:
-        # Critério ilustrativo; recebe o usuário, conforme o UML da Entrega 02.
         return len(usuario.historico.registros) >= self.minimoConclusoes
 
     def desbloquearConquista(self) -> None:
@@ -118,7 +112,6 @@ class Usuario:
     totalAtividadesPrevistas: int = 0
 
     def calcularTaxaCompletacao(self) -> float:
-        # Recorte ilustrativo: conclusões registradas / atividades previstas.
         if self.totalAtividadesPrevistas <= 0:
             return 0.0
         return min(1.0, len(self.historico.registros) / self.totalAtividadesPrevistas)
@@ -137,7 +130,6 @@ class ResultadoConclusao:
 
 class JogoFacade:
     def __init__(self, usuario: Usuario):
-        # Todas as referências vêm do mesmo usuário.
         self.usuario = usuario
         self.pet = usuario.pet
         self.historico = usuario.historico
@@ -145,7 +137,6 @@ class JogoFacade:
 
     def concluirAtividade(self, idConclusao: str, categoria: CategoriaXP,
                           pontos: int) -> ResultadoConclusao:
-        """Processa as consequências de uma atividade já concluída e validada."""
         if not isinstance(idConclusao, str) or not idConclusao.strip():
             raise ValueError("Informe o identificador desta ocorrência concluída.")
         validarRecompensa(categoria, pontos)
