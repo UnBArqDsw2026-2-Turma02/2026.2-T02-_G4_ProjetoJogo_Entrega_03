@@ -1,0 +1,185 @@
+"""
+Padrão GoF Decorator (estrutural) aplicado ao cálculo de XP do Hábito.
+
+Problema: o XP base de um check-in (Habito.calcularExperienciaGerada()) precisa
+receber bônus em camadas (sequência de dias, fim de semana, ...), combináveis
+livremente, sem alterar a classe Habito e sem criar uma subclasse por combinação.
+
+Participantes do padrão neste projeto:
+    Component          -> CalculadoraXP            (interface comum)
+    ConcreteComponent  -> XPBaseHabito             (XP base, delega ao Habito)
+    Decorator          -> BonusXPDecorator         (guarda o componente embrulhado)
+    ConcreteDecorators -> BonusSequenciaDecorator, BonusFimDeSemanaDecorator
+    Client             -> montar_calculadora() e demo.py (cliente de demonstração)
+
+Os valores dos bônus (10% a cada 7 dias, teto de 50%; 20% no fim de semana) são
+valores ilustrativos de balanceamento e devem ser confirmados com a equipe de game design.
+"""
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from datetime import date
+from enum import Enum
+
+
+# --------------------------------------------------------------------------
+# Tipos auxiliares (espelham os enums do diagrama de classes da equipe)
+# --------------------------------------------------------------------------
+class DiaSemana(Enum):
+    SEGUNDA = 0
+    TERCA = 1
+    QUARTA = 2
+    QUINTA = 3
+    SEXTA = 4
+    SABADO = 5
+    DOMINGO = 6
+
+    @classmethod
+    def de_data(cls, data: date) -> "DiaSemana":
+        # date.weekday(): segunda = 0 ... domingo = 6
+        return cls(data.weekday())
+
+
+class CategoriaXP(Enum):
+    INTELECTUAL = "INTELECTUAL"
+    SABEDORIA = "SABEDORIA"
+    ZEN = "ZEN"
+    ATLETICO = "ATLETICO"
+    HIDRATACAO = "HIDRATACAO"
+
+
+@dataclass
+class Habito:
+    """Versão simplificada da classe Habito do diagrama de classes.
+
+    O padrão Decorator NÃO altera esta classe: ela continua responsável apenas
+    pelo XP base de um check-in.
+    """
+
+    titulo_habito: str
+    categoria: CategoriaXP
+    sequencia_dias_streak: int = 0
+    XP_BASE_CHECKIN = 10.0  # valor ilustrativo
+
+    def calcular_experiencia_gerada(self) -> float:
+        return self.XP_BASE_CHECKIN
+
+
+# --------------------------------------------------------------------------
+# Component
+# --------------------------------------------------------------------------
+class CalculadoraXP(ABC):
+    """Interface comum a quem calcula XP: o componente base e todos os decorators."""
+
+    @abstractmethod
+    def calcular_experiencia_gerada(self) -> float:
+        ...
+
+    @abstractmethod
+    def descrever(self) -> str:
+        """Texto com as camadas aplicadas (útil para tela de resumo e para depurar)."""
+
+
+# --------------------------------------------------------------------------
+# ConcreteComponent
+# --------------------------------------------------------------------------
+class XPBaseHabito(CalculadoraXP):
+    """XP base do check-in: delega ao Habito, sem nenhum bônus."""
+
+    def __init__(self, habito: Habito) -> None:
+        self._habito = habito
+
+    def calcular_experiencia_gerada(self) -> float:
+        return self._habito.calcular_experiencia_gerada()
+
+    def descrever(self) -> str:
+        return f"XP base ({self.calcular_experiencia_gerada():.2f})"
+
+
+# --------------------------------------------------------------------------
+# Decorator (base)
+# --------------------------------------------------------------------------
+class BonusXPDecorator(CalculadoraXP):
+    """Decorator base: implementa a mesma interface e delega tudo ao componente embrulhado."""
+
+    def __init__(self, componente: CalculadoraXP) -> None:
+        self._componente = componente
+
+    def calcular_experiencia_gerada(self) -> float:
+        return self._componente.calcular_experiencia_gerada()
+
+    def descrever(self) -> str:
+        return self._componente.descrever()
+
+
+# --------------------------------------------------------------------------
+# ConcreteDecorators
+# --------------------------------------------------------------------------
+class BonusSequenciaDecorator(BonusXPDecorator):
+    """+10% de XP a cada 7 dias de sequência (streak), com teto de +50%."""
+
+    DIAS_POR_BLOCO = 7
+    PERCENTUAL_POR_BLOCO = 10
+    PERCENTUAL_MAXIMO = 50
+
+    def __init__(self, componente: CalculadoraXP, sequencia_dias_streak: int) -> None:
+        super().__init__(componente)
+        self._sequencia_dias_streak = max(0, sequencia_dias_streak)
+
+    def percentual(self) -> int:
+        blocos = self._sequencia_dias_streak // self.DIAS_POR_BLOCO
+        return min(blocos * self.PERCENTUAL_POR_BLOCO, self.PERCENTUAL_MAXIMO)
+
+    def calcular_experiencia_gerada(self) -> float:
+        xp_anterior = super().calcular_experiencia_gerada()
+        return xp_anterior * (1 + self.percentual() / 100)
+
+    def descrever(self) -> str:
+        return (
+            f"{super().descrever()} | Bônus de sequência: "
+            f"+{self.percentual()}% ({self._sequencia_dias_streak} dias)"
+        )
+
+
+class BonusFimDeSemanaDecorator(BonusXPDecorator):
+    """+20% de XP quando o check-in acontece no sábado ou no domingo."""
+
+    PERCENTUAL = 20
+    DIAS_COM_BONUS = frozenset({DiaSemana.SABADO, DiaSemana.DOMINGO})
+
+    def __init__(self, componente: CalculadoraXP, data_checkin: date) -> None:
+        super().__init__(componente)
+        self._dia = DiaSemana.de_data(data_checkin)
+
+    def percentual(self) -> int:
+        return self.PERCENTUAL if self._dia in self.DIAS_COM_BONUS else 0
+
+    def calcular_experiencia_gerada(self) -> float:
+        xp_anterior = super().calcular_experiencia_gerada()
+        return xp_anterior * (1 + self.percentual() / 100)
+
+    def descrever(self) -> str:
+        return (
+            f"{super().descrever()} | Bônus de fim de semana: "
+            f"+{self.percentual()}% ({self._dia.name})"
+        )
+
+
+# --------------------------------------------------------------------------
+# Client
+# --------------------------------------------------------------------------
+def montar_calculadora(
+    habito: Habito,
+    data_checkin: date,
+    *,
+    bonus_sequencia: bool = True,
+    bonus_fim_de_semana: bool = True,
+) -> CalculadoraXP:
+    """O cliente decide quais camadas empilhar; quem usa o resultado só vê CalculadoraXP."""
+    calculadora: CalculadoraXP = XPBaseHabito(habito)
+    if bonus_sequencia:
+        calculadora = BonusSequenciaDecorator(calculadora, habito.sequencia_dias_streak)
+    if bonus_fim_de_semana:
+        calculadora = BonusFimDeSemanaDecorator(calculadora, data_checkin)
+    return calculadora
