@@ -16,8 +16,8 @@ A preparação foi organizada em etapas, separando o que já foi feito do que ai
 | Modelagem estática | Definição dos participantes do padrão e de suas relações com `Habito`. | Diagrama de classes (Figura 1). |
 | Modelagem dinâmica | Ordenação das chamadas ao longo da pilha de decorators. | Diagrama de sequência (Figura 2 e Figura 3). |
 | Revisão da modelagem | Conferência visual dos diagramas contra o código. | Dois defeitos de notação da primeira versão (agregação invertida e seta de delegação confusa) foram corrigidos. Modelo revisado. |
-| Implementação | Implementar o recorte independente em Python e verificar os cenários. | Código e demonstração executados; dez testes passaram em 18/10/2026. |
-| Evidências | Gravar a execução, publicar os arquivos e relacionar a contribuição aos commits. |  |
+| Implementação | Implementar o recorte independente em Python e verificar os cenários. | Código e demonstração executados; nove testes passaram; a execução foi reconferida em 19/10/2026. |
+| Evidências | Publicação dos arquivos e vínculo com modelo, execução e contribuição. | Código, demonstração, testes e UML disponíveis no [commit de Gabriel](https://github.com/UnBArqDsw2026-2-Turma02/2026.2-T02-_G4_ProjetoJogo_Entrega_03/commit/1e1fc79d82d2ef669e489ac52f0a5ce8ef77d425). Vídeo próprio do Decorator não apresentado. |
 
 
 #### GoF Estrutural
@@ -67,7 +67,12 @@ O padrão tem custos. A montagem das camadas fica no cliente e cresce com o núm
 - O congelamento e a quebra de streak, descritos no diagrama de estados do `Habito`, não participam deste recorte.
 
 ##### Modelagem (Notação UML)
-![Diagrama de sequência da pilha de decorators](../../DiagramaDecorator/classes.png)
+
+###### Diagrama de classes
+
+![Figura 1 — Diagrama de classes do Decorator](../../DiagramaDecorator/classes.png)
+
+**Figura 1.** Participantes e relações do Decorator aplicado aos bônus de XP. Fonte: modelagem de Gabriel Pereira da Silva, registrada no commit `1e1fc79`.
 
 O diagrama é um recorte: `Habito` exibe apenas os membros que participam do fluxo. `CategoriaXP` e `DiaSemana` são os tipos enumerados já existentes. O diagrama da Entrega 02 usa *camelCase* e o código Python usa *snake_case*; `calcularExperienciaGerada()` do diagrama corresponde a `calcular_experiencia_gerada()` no código.
 
@@ -85,9 +90,11 @@ O diagrama é um recorte: `Habito` exibe apenas os membros que participam do flu
 
 ###### Diagrama de sequência
 
-![Diagrama de sequência da pilha de decorators](../../DiagramaDecorator/sequencia1.svg)
+![Figura 2 — Diagrama de sequência do Decorator, parte 1](../../DiagramaDecorator/sequencia1.svg)
 
-![Diagrama de sequência da pilha de decorators](../../DiagramaDecorator/sequencia2.png)
+![Figura 3 — Diagrama de sequência do Decorator, parte 2](../../DiagramaDecorator/sequencia2.png)
+
+**Figuras 2 e 3.** Delegação ao longo das camadas e retorno do cálculo. Fonte: modelagem de Gabriel Pereira da Silva, registrada no commit `1e1fc79`.
 
 **Leitura do fluxo:** o cliente chama a camada mais externa (fim de semana), que repassa a chamada à camada de sequência, que a repassa ao XP base, que consulta o `Habito` e obtém 10,0. Na volta, cada camada ajusta o valor: a sequência de 14 dias acrescenta 20% (12,0) e o fim de semana acrescenta mais 20% (14,4). O cliente enxerga apenas `CalculadoraXP`.
 
@@ -241,4 +248,7 @@ A execução foi verificada com Python 3.13.16 em 18/10/2026. A demonstração e
 
 | Requisito ou problema | Decisão e papel do padrão | Modelo UML | Código | Evidência de execução |
 |---|---|---|---|---|
-| A preencher | A preencher | A preencher | A preencher | A preencher |
+| Calcular o XP base de um check-in de hábito | Preservar o cálculo em `Habito`, acessado por `XPBaseHabito` | Figura 1: Component e ConcreteComponent | `Habito`, `XPBaseHabito` | Dia útil com sequência de 2 dias: 10,00 XP, conforme a demonstração |
+| Bonificar sequência de dias sem alterar o hábito | Envolver o componente em `BonusSequenciaDecorator` | Figura 1 e fluxo das Figuras 2 e 3 | `BonusSequenciaDecorator` | Testes de faixas, teto de 50% e sequência negativa |
+| Aplicar bônus no sábado e no domingo | Acrescentar `BonusFimDeSemanaDecorator` | Figura 1 e fluxo das Figuras 2 e 3 | `BonusFimDeSemanaDecorator` | Testes de sábado, domingo e dia útil |
+| Combinar ou desativar bônus por cálculo | Montar as camadas pelo contrato `CalculadoraXP` | Figuras 1, 2 e 3 | `montar_calculadora()` e `demo.py` | Testes de combinação, ordem, ativação parcial e preservação do hábito |
