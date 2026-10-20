@@ -1,0 +1,80 @@
+
+@startuml Diagrama_observer_v2
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+skinparam ArrowThickness 1.5
+
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+interface ObservadorAtividade <<interface>> {
+    + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+}
+
+abstract class AssuntoAtividade <<abstract>> {
+    - observadores: List<ObservadorAtividade>
+    + adicionarObservador(obs: ObservadorAtividade): void
+    + removerObservador(obs: ObservadorAtividade): void
+    # notificarObservadores(evento: EventoConclusaoAtividade): void
+}
+
+class EventoConclusaoAtividade {
+    - categoria: CategoriaXP
+    - xpGerado: float
+    + getCategoria(): CategoriaXP
+    + getXPGerado(): float
+}
+
+class GerenciadorConquistas {
+    + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+}
+
+class PetVirtual {
+    - experienciaTotal: float
+    + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+    + acumularExperiencia(categoria: CategoriaXP, pontos: float): void
+}
+
+class SessaoPomodoro {
+    - tagCategoria: CategoriaXP
+    + finalizarCicloComSucesso(): void
+}
+
+enum CategoriaXP <<enumeration>> {
+    INTELECTUAL
+    SABEDORIA
+    ZEN
+    ATLETICO
+    HIDRATACAO
+}
+
+' Implementação da interface pelos observadores concretos
+GerenciadorConquistas ..|> ObservadorAtividade
+PetVirtual ..|> ObservadorAtividade
+
+' Herança do publicador concreto
+SessaoPomodoro --|> AssuntoAtividade
+
+' Inscrição e notificação dos observadores
+AssuntoAtividade "0..*" --> "0..*" ObservadorAtividade
+
+' Dependências relacionadas ao evento
+AssuntoAtividade ..> EventoConclusaoAtividade
+ObservadorAtividade ..> EventoConclusaoAtividade 
+
+' Dependências relacionadas à categoria de XP
+EventoConclusaoAtividade ..> CategoriaXP
+SessaoPomodoro ..> CategoriaXP
+
+@enduml

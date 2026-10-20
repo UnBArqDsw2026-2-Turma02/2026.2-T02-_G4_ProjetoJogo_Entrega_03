@@ -1,0 +1,278 @@
+@startuml Diagrama_observer_state
+
+top to bottom direction
+
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 120
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+package "Observer" {
+
+    ' Observer: notifica o pet e o gerenciador de conquistas
+    ' quando uma atividade e concluida.
+
+    interface ObservadorAtividade <<interface>> {
+        + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+    }
+
+    abstract class AssuntoAtividade <<abstract>> {
+        - observadores: List<ObservadorAtividade>
+        + adicionarObservador(obs: ObservadorAtividade): void
+        + removerObservador(obs: ObservadorAtividade): void
+        # notificarObservadores(evento: EventoConclusaoAtividade): void
+        # publicarConclusao(categoria: CategoriaXP, xpGerado: float, usuarioReferencia: Usuario): void
+    }
+
+    class EventoConclusaoAtividade {
+        - categoria: CategoriaXP
+        - xpGerado: float
+        - usuarioReferencia: Usuario
+        + EventoConclusaoAtividade(categoria: CategoriaXP, xpGerado: float, usuarioReferencia: Usuario)
+        + getCategoria(): CategoriaXP
+        + getXPGerado(): float
+        + getUsuarioReferencia(): Usuario
+    }
+
+    class GerenciadorConquistas implements ObservadorAtividade {
+        + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+        + verificarEConcederConquistas(usuario: Usuario): void
+    }
+}
+
+package "State - Pomodoro" {
+
+    ' State: encapsula os comportamentos e as transicoes
+    ' da sessao Pomodoro conforme seu estado atual.
+
+    interface EstadoPomodoro <<interface>> {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+        + calcularRecompensaExperiencia(sessao: SessaoPomodoro): float
+    }
+
+    class EstadoConfigurando implements EstadoPomodoro {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+        + calcularRecompensaExperiencia(sessao: SessaoPomodoro): float
+    }
+
+    class PomodoroFocoEmAndamento implements EstadoPomodoro {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+        + calcularRecompensaExperiencia(sessao: SessaoPomodoro): float
+    }
+
+    class PomodoroPausado implements EstadoPomodoro {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+        + calcularRecompensaExperiencia(sessao: SessaoPomodoro): float
+    }
+
+    class PomodoroConcluido implements EstadoPomodoro {
+        + iniciarCiclo(sessao: SessaoPomodoro): void
+        + pausarCiclo(sessao: SessaoPomodoro): void
+        + retomarCiclo(sessao: SessaoPomodoro): void
+        + finalizarCicloComSucesso(sessao: SessaoPomodoro): void
+        + calcularRecompensaExperiencia(sessao: SessaoPomodoro): float
+    }
+}
+
+package "State - Pet" {
+
+    ' State: define o processamento de XP e a evolucao
+    ' do pet conforme sua fase de vida.
+
+    interface EstadoPet <<interface>> {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+        + getNomeFase(): String
+    }
+
+    class EstadoBebe implements EstadoPet {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+        + getNomeFase(): String
+    }
+
+    class EstadoCrianca implements EstadoPet {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+        + getNomeFase(): String
+    }
+
+    class EstadoAdolescente implements EstadoPet {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+        + getNomeFase(): String
+    }
+
+    
+    class EstadoAdulto implements EstadoPet {
+        + processarExperiencia(pet: PetVirtual, categoria: CategoriaXP, pontos: float): void
+        + avaliarEvolucao(pet: PetVirtual): void
+        + getNomeFase(): String
+    }
+}
+
+package "Dominio" {
+
+    class Usuario {
+        - idUsuario: String
+        - nomeExibicao: String
+        - sequenciaGeralDias: int
+        + autenticarAcesso(): boolean
+        + atualizarSequencialDiaria(): int
+        + obterHistoricoDesempenho(): void
+        + obterConquistas(): List<Conquista>
+        + adicionarAtividade(atividade: AssuntoAtividade): void
+        + adicionarConquista(conquista: Conquista): void
+        + getPet(): PetVirtual
+    }
+
+    class PetVirtual implements ObservadorAtividade {
+        - nomePet: String
+        - peso: int
+        - experienciasPorCategorias: float[5]
+        - experienciaTotal: float
+        - estadoAtual: EstadoPet
+        + setEstado(novoEstado: EstadoPet): void
+        + acumularExperiencia(categoria: CategoriaXP, pontosXp: float): void
+        + avaliarEvolucaoPorAfinidade(): void
+        + emAtividadeConcluida(evento: EventoConclusaoAtividade): void
+        + registrarExperiencia(categoria: CategoriaXP, xp: float): void
+        + getCategoriaDominante(): CategoriaXP
+        + getFase(): String
+    }
+
+    class SessaoPomodoro extends AssuntoAtividade {
+        - usuario: Usuario
+        - idSessao: String
+        - tagCategoriaAtividade: CategoriaXP
+        - cicloAtual: int
+        - estadoAtual: EstadoPomodoro
+        + setEstado(novoEstado: EstadoPomodoro): void
+        + iniciarCiclo(): void
+        + pausarCiclo(): void
+        + retomarCiclo(): void
+        + finalizarCicloComSucesso(): void
+        + calcularRecompensaExperiencia(): float
+        + entregarRecompensa(): void
+    }
+
+    class Habito extends AssuntoAtividade {
+        - usuario: Usuario
+        - idHabito: String
+        - tituloHabito: String
+        - categoria: CategoriaXP
+        - sequenciaDiasStreak: int
+        + registrarCheckInDiario(): boolean
+        + calcularExperienciaGerada(): float
+    }
+
+    class ContagemDeAgua extends AssuntoAtividade {
+        - usuario: Usuario
+        - idRegistroAgua: int
+        - metaDiariaMl: int
+        - volumeConsumidoMl: int
+        + registrarIngestaoAgua(volumeMl: int): void
+        + calcularExperienciaGerada(): float
+    }
+
+    class Conquista {
+        - idConquista: String
+        - tituloConquista: String
+        - descricaoRequisito: String
+        - foiDesbloqueada: boolean
+        - requisito: Predicate<Usuario>
+        - categoriaBonus: CategoriaXP
+        - xpBonus: float
+        + requisitoAtendido(usuario: Usuario): boolean
+        + concederRecompensa(pet: PetVirtual): void
+    }
+
+    enum CategoriaXP <<enumeration>> {
+        INTELECTUAL
+        SABEDORIA
+        ZEN
+        ATLETICO
+        HIDRATACAO
+    }
+}
+
+' Relacionamentos
+
+' Cada atividade notifica dois observadores:
+' PetVirtual e GerenciadorConquistas.
+' Subject (agregacao) mantem a lista de Observers (conforme os slides).
+
+AssuntoAtividade "0..*" o--> "0..*" ObservadorAtividade
+
+AssuntoAtividade ..> EventoConclusaoAtividade
+ObservadorAtividade ..> EventoConclusaoAtividade
+
+' Context (agregacao) mantem referencia ao State atual (conforme os slides).
+
+SessaoPomodoro "1" o--> "1" EstadoPomodoro
+PetVirtual "1" o--> "1" EstadoPet
+EstadoPomodoro ..> SessaoPomodoro
+EstadoPet ..> PetVirtual
+
+' Transicoes entre estados concretos (cada estado define o proximo)
+
+EstadoConfigurando ..> PomodoroFocoEmAndamento
+PomodoroFocoEmAndamento ..> PomodoroPausado
+PomodoroPausado ..> PomodoroFocoEmAndamento
+PomodoroFocoEmAndamento ..> PomodoroConcluido
+
+EstadoBebe ..> EstadoCrianca
+EstadoCrianca ..> EstadoAdolescente
+EstadoAdolescente ..> EstadoAdulto
+
+' Estados iniciais.
+
+note top of SessaoPomodoro
+    Estado inicial:
+    EstadoConfigurando
+end note
+
+note top of PetVirtual
+    Estado inicial:
+    EstadoBebe
+end note
+
+Usuario "1" *-- "1" PetVirtual
+Usuario "1" *-- "0..*" AssuntoAtividade
+Usuario "1" o-- "0..*" Conquista
+Usuario "1" *-- "1" GerenciadorConquistas
+
+GerenciadorConquistas ..> Conquista
+GerenciadorConquistas ..> Usuario
+Conquista ..> PetVirtual
+Conquista ..> Usuario
+
+EventoConclusaoAtividade ..> CategoriaXP
+SessaoPomodoro ..> CategoriaXP
+Habito ..> CategoriaXP
+Conquista ..> CategoriaXP
+EstadoPet ..> CategoriaXP
+PetVirtual ..> CategoriaXP
+
+@enduml

@@ -1,0 +1,166 @@
+@startuml Diagrama_Classes_Base
+
+left to right direction
+
+skinparam ClassAttributeIconSize 0
+skinparam style strictuml
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam BackgroundColor #FFFFFF
+skinparam padding 10
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #343A40
+    ArrowColor #495057
+}
+
+' Classes do dominio
+
+class Conquista {
+    - idConquista: String
+    - tituloConquista: String
+    - descricaoRequisito: String
+    - pontosExperienciaRecompensa: float
+    - foiDesbloqueada: boolean
+    - dataDesbloqueio: Date
+    + validarRequisitoGeral(usuario: Usuario): boolean
+    + concederRecompensa(pet: PetVirtual): void
+}
+
+class PetVirtual {
+    - nomePet: String
+    - nivel: int
+    - faseVida: FaseVidaPet
+    - peso: int
+    - experienciasPorCategorias: float[5]
+    - experienciaTotal: float
+    + acumularExperiencia(categoria: CategoriaXP, pontosXp: float): void
+    + avaliarEvolucaoPorAfinidade(): void
+}
+
+class Usuario {
+    - idUsuario: String
+    - nomeExibicao: String
+    - sequenciaGeralDias: int
+    + autenticarAcesso(): boolean
+    + atualizarSequencialDiaria(): int
+    + obterHistoricoDesempenho(): void
+}
+
+class ContagemDeAgua {
+    - idRegistroAgua: int
+    - metaDiariaMl: int
+    - volumeConsumidoMl: int
+    - dataRegistro: Date
+    + registrarIngestaoAgua(volumeMl: int): void
+    + calcularPercentualAlcancado(): float
+    + validarConsumoMeta(): boolean
+    + reiniciarContador(): void
+    + calcularExperienciaGerada(): float
+}
+
+class Habito {
+    - idHabito: String
+    - tituloHabito: String
+    - categoria: CategoriaXP
+    - sequenciaDiasStreak: int
+    - dataUltimoCheckIn: Date
+    - dataUltimoCongelamento: Date
+    - diasAtivosSemana: DiaSemana[1..7]
+    - estaCongeladoHoje: boolean
+    - diasCooldownCongelamento: int = 7
+    + registrarCheckInDiario(): boolean
+    + verificarQuebraDeStreak(): void
+    + podeCongelarStreak(): boolean
+    + acionarCongelamentoStreak(): boolean
+    + calcularExperienciaGerada(): float
+}
+
+class SessaoPomodoro {
+    - idSessao: String
+    - tagCategoriaAtividade: CategoriaXP
+    - cicloAtual: int
+    - dataHoraInicio: DateTime
+    - dataHoraFim: DateTime
+    - foiConcluida: boolean
+    + iniciarCiclo(): void
+    + pausarCiclo(): void
+    + retomarCiclo(): void
+    + verificarPausaLonga(): boolean
+    + finalizarCicloComSucesso(): void
+    + calcularRecompensaExperiencia(): float
+}
+
+' Enumeracoes
+
+enum CategoriaXP <<enumeration>> {
+    INTELECTUAL
+    SABEDORIA
+    ZEN
+    ATLETICO
+    HIDRATACAO
+}
+
+enum FaseVidaPet <<enumeration>> {
+    BEBE
+    CRIANCA
+    ADOLESCENTE
+    ADULTO
+}
+
+enum DiaSemana <<enumeration>> {
+    SEGUNDA
+    TERCA
+    QUARTA
+    QUINTA
+    SEXTA
+    SABADO
+    DOMINGO
+}
+
+' Relacionamentos
+
+' Usuario e suas entidades
+
+Usuario "1" *-- "1" PetVirtual
+Usuario "1" *-- "0..*" Habito
+Usuario "1" o-- "0..*" SessaoPomodoro
+Usuario "1" o-- "0..*" Conquista
+
+' Dependencias do PetVirtual
+
+Conquista ..> PetVirtual
+ContagemDeAgua ..> PetVirtual
+Habito ..> PetVirtual
+SessaoPomodoro ..> PetVirtual
+
+' Dependencia de Usuario
+
+Conquista ..> Usuario
+
+' Organizacao visual
+
+Usuario -[hidden]right- PetVirtual
+PetVirtual -[hidden]down- Habito
+Habito -[hidden]right- SessaoPomodoro
+
+PetVirtual -[hidden]left- Conquista
+PetVirtual -[hidden]right- ContagemDeAgua
+
+ContagemDeAgua -[hidden]right- CategoriaXP
+CategoriaXP -[hidden]down- FaseVidaPet
+FaseVidaPet -[hidden]down- DiaSemana
+
+' Relacionamentos com enumeracoes
+
+PetVirtual ..> FaseVidaPet
+PetVirtual ..> CategoriaXP
+
+ContagemDeAgua ..> CategoriaXP
+Habito ..> CategoriaXP
+Habito ..> DiaSemana
+SessaoPomodoro ..> CategoriaXP
+
+@enduml

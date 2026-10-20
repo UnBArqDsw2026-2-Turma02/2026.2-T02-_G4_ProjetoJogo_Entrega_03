@@ -1,0 +1,36 @@
+classDiagram
+    direction TB
+    class ClienteDemo {
+        <<client>>
+        +executar()
+    }
+    class JogoFacade {
+        <<facade>>
+        +concluirAtividade(idConclusao: String, categoria: CategoriaXP, pontos: int) ResultadoConclusao
+    }
+    class Usuario {
+        +calcularTaxaCompletacao() double
+    }
+    class PetVirtual {
+        -vetorXP: int[5]
+        +adicionarXP(categoria: CategoriaXP, pontos: int) void
+        +verificarEvolucao() void
+        +determinarEvolucao() Evolucao
+    }
+    class HistoricoUsuario {
+        +possuiConclusao(idConclusao: String) boolean
+        +registrarConclusao(idConclusao: String, categoria: CategoriaXP, pontos: int) void
+    }
+    class Conquista {
+        -foiDesbloqueada: boolean
+        +validarRequisitoGeral(usuario: Usuario) boolean
+        +desbloquearConquista() void
+    }
+    ClienteDemo ..> JogoFacade : solicita conclusao
+    JogoFacade "1" --> "1" Usuario : usuario
+    JogoFacade "1" --> "1" PetVirtual : pet
+    JogoFacade "1" --> "1" HistoricoUsuario : historico
+    JogoFacade "1" --> "0..*" Conquista : conquistas
+    Conquista ..> Usuario : avalia contexto
+    note for JogoFacade "Precondicao: atividade concluida e XP calculado/validado.\nObjetos pertencem ao mesmo usuario."
+    note for HistoricoUsuario "Operacoes novas propostas nesta modelagem."
